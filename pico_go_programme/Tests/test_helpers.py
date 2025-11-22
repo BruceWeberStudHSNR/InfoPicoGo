@@ -116,9 +116,12 @@ class SensorStub:
 class MotorStub:
     def __init__(self):
         self.commands = []
+        self.forward = Mock()
+        self.right = Mock()
 
     def setMotor(self, left, right):
         self.commands.append((left, right))
+        
 
 
 class BuzzerStub:
@@ -178,6 +181,7 @@ class MockLineFollowService():
     follow_line = Mock()
     search_for_line = Mock()
     line_position_to_motor_power = Mock()
+    is_on_line = Mock(return_value=False)
     
     def get_line_state(self):
         return self.__line_state
@@ -191,6 +195,6 @@ class MockAvoidObstacleService():
         self.turn_speed = turn_speed
         self.forward_speed = forward_speed
         self.__TimeService = TimeService
-        self.scan_for_obstacle = Mock(return_value=None)
-        self.avoid_obstacle = Mock()
+        self.scan_and_avoid_obstacle = Mock(return_value=None)
+        self.drive_around_obstacle = Mock()
         

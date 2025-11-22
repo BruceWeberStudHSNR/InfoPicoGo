@@ -54,6 +54,8 @@ class LineFollowService():
                 self.__searching_state = "DASHING"
                 self.__searching_timer = current_time
 
+    def is_on_line(self):
+        return self.__line_state == "ON_LINE"
 
     def get_line_state(self):
         return self.__line_state

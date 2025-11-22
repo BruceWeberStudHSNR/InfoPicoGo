@@ -62,4 +62,4 @@ class TestAutoPicoGo(unittest.TestCase):
         
         auto.automated_drive()
         # Check that AvoidObstacleService was invoked to avoid obstacle
-        mock_obstacle_service.avoid_obstacle.assert_called()                   # a call happened
+        mock_obstacle_service.drive_around_obstacle.assert_called()                   # a call happened

@@ -23,8 +23,8 @@ class AutoPicoGo():
         self.__IRSensor = ir_sensor if ir_sensor is not None else TRSensor()
         self.__USSensor = us_sensor if us_sensor is not None else UltraSoundSensor()
         self.__Buzzer = buzzer if buzzer is not None else Buzzer()
-        self.__TimeService = time_service if time_service is not None else time
         # --- 2) instantiate services, passing hardware instances ---
+        self.__TimeService = time_service if time_service is not None else time
         self.__LineFollowService = line_follow_service if line_follow_service is not None else LineFollowService(self.__IRSensor, self.__Motor, self.forward_speed)
         self.__AvoidObstacleService = avoid_obstacle_service if avoid_obstacle_service is not None else AvoidObstacleService(self.__USSensor, self.__Motor, self.turn_speed, self.forward_speed, self.__TimeService)
 
@@ -52,11 +52,16 @@ class AutoPicoGo():
         self.__LineFollowService.follow_line()
         
     def drive_around_obstacle(self):
-        self.__AvoidObstacleService.avoid_obstacle()
+          # Check if line is visible again
+          # Probably will not work as intended as you need to leave to line to avoid the obstacle
+        if (self.__LineFollowService.is_on_line()):
+            self.__automated_car_action = "FOLLOW_LINE"
+        else:
+            self.__AvoidObstacleService.drive_around_obstacle()
 
     def __check_for_obstacle(self):
         if ( self.is_checking_for_obstacles):       
-            self.__AvoidObstacleService.scan_for_obstacle()
+            self.__AvoidObstacleService.scan_and_avoid_obstacle()
             if (self.__AvoidObstacleService.is_remembering_obstacle):
                 self.__automated_car_action = "DRIVE_AROUND_OBSTACLE"
             

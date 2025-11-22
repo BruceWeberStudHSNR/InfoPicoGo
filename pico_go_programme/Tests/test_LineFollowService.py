@@ -28,8 +28,8 @@ class TestLineFollowService(unittest.TestCase):
         self.time_svc.advance(600)  # more than dash_time
         
         self.line_follow_service.search_for_line()
+        self.line_follow_service.search_for_line()
         
         self.assertTrue(self.motor.right.called)
         
-        self.assertTrue()
     

@@ -3,6 +3,8 @@ from machine import Pin
 
 ###################Pin Config###################
 
+
+
 autoPicoGo = AutoPicoGo()
 
 while True:
