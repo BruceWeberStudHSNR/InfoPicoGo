@@ -96,11 +96,5 @@ while True:
                     obstacle_recognition_start_time = 0
 
 
-
-
-
-
-
-
-
+#22.11.2025
 
