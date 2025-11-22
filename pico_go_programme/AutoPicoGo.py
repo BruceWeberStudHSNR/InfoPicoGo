@@ -48,8 +48,9 @@ class AutoPicoGo():
     def follow_line(self):
         if (self.is_checking_for_obstacles):
             self.__check_for_obstacle()
+            
 
-        self.__LineFollowService.follow_line()
+        self.__LineFollowService.follow_line_with_search()
         
     def drive_around_obstacle(self):
           # Check if line is visible again
