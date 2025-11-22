@@ -54,7 +54,7 @@ class AutoPicoGo():
     def drive_around_obstacle(self):
           # Check if line is visible again
           # Probably will not work as intended as you need to leave to line to avoid the obstacle
-        if (self.__LineFollowService.is_on_line()):
+        if (self.__LineFollowService.is_on_line() or not self.__AvoidObstacleService.is_remembering_obstacle):
             self.__automated_car_action = "FOLLOW_LINE"
         else:
             self.__AvoidObstacleService.drive_around_obstacle()
