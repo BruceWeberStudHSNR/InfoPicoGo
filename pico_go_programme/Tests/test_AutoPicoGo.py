@@ -42,3 +42,24 @@ class TestAutoPicoGo(unittest.TestCase):
         auto.automated_drive()
         # Check that LinefollowService was invoked to follow line
         mock_line_service.follow_line.assert_called()                   # a call happened
+        
+        
+    def test_auto_drives_around_obstacle(self):
+        motor, us, time_svc, buzzer, ir_sensor = mock_hardware()
+        mock_line_service = MockLineFollowService(ir_sensor, motor, 50)
+        mock_obstacle_service = MockAvoidObstacleService(us,time_svc, motor, 25, 50)
+        
+        auto = AutoPicoGo(motor=motor, 
+                          us_sensor=us, 
+                          buzzer=buzzer, 
+                          time_service=time_svc, 
+                          is_checking_for_obstacles=True, 
+                          line_follow_service=mock_line_service, 
+                          avoid_obstacle_service=mock_obstacle_service)
+        
+        # Set action to DRIVE_AROUND_OBSTACLE
+        auto.set_automated_car_action("DRIVE_AROUND_OBSTACLE")
+        
+        auto.automated_drive()
+        # Check that AvoidObstacleService was invoked to avoid obstacle
+        mock_obstacle_service.avoid_obstacle.assert_called()                   # a call happened
