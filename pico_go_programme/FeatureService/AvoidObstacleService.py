@@ -2,7 +2,7 @@
 
 
 import time
-from Info.pico_go_programme.Motor import MotorControl
+from Info.pico_go_programme.Hardware import MotorControl
 from Info.pico_go_programme.helper import has_time_elapsed
 
 
@@ -15,6 +15,7 @@ class AvoidObstacleService():
                 obstacle_recognition_time = 3000,
                 obstacle_recognition_distance = 20 ):
         
+        # Obstacle Memory Service
         self.__obstacle_forget_time =  obstacle_forget_time
         self.__obstacle_recognition_time =obstacle_recognition_time
         self.__obstacle_recognition_start_time =0
@@ -70,7 +71,6 @@ class AvoidObstacleService():
                     self.remember_obstacle()
     
     def drive_around_obstacle(self):
-        # placeholder; real avoidance should be in a dedicated service
         current_time = self.__TimeService.ticks_ms()
         
         if (self.__dash_timer == 0):

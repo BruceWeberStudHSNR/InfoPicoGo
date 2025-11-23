@@ -1,5 +1,5 @@
 from Motor import MotorControl #importiert die Klasse MotorControl aus der Datei Motor.py
-from TRSensor import TRSensor
+from Info.pico_go_programme.Hardware.TRSensor import TRSensor
 from Ultrasonic_Ranging import dist
 from machine import Pin
 import time
