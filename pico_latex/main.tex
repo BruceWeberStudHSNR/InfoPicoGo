@@ -1,0 +1,250 @@
+\documentclass[12pt,a4paper]{report}
+
+% Pakete
+\usepackage[utf8]{inputenc}
+\usepackage[ngerman]{babel}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{helvet} % Arial-ähnliche Schriftart
+\usepackage{ragged2e}
+\usepackage{listings}
+
+% Schriftart auf Helvetica (Arial-ähnlich) setzen
+\renewcommand{\familydefault}{\sfdefault}
+
+% Seitenränder und Kopf-/Fußzeile
+\geometry{
+    top=2.5cm,
+    bottom=2cm,
+    left=2.5cm,
+    right=2.5cm,
+    headheight=1.25cm,
+    headsep=0.5cm,
+    footskip=1.25cm
+}
+
+% Zeilenabstand 1,3-fach
+\setstretch{1.3}
+
+% Blocksatz
+\justifying
+
+% Absatzabstand 12pt
+\setlength{\parskip}{12pt}
+\setlength{\parindent}{0pt}
+
+% Kopf- und Fußzeile
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\leftmark}
+\fancyhead[R]{\thepage}
+\fancyhead[C]{}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Kapitelmarkierungen für Kopfzeile
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+
+% Überschriftenformatierung
+\titleformat{\chapter}[hang]
+{\fontsize{16}{19.2}\bfseries\sffamily}
+{\thechapter\hspace{1.75cm}}
+{0pt}
+{}
+[\vspace{-6pt}]
+
+\titleformat{\section}[hang]
+{\fontsize{14}{16.8}\bfseries\sffamily}
+{\thesection\hspace{1.75cm}}
+{0pt}
+{}
+[\vspace{-6pt}]
+
+\titleformat{\subsection}[hang]
+{\fontsize{12}{14.4}\bfseries\sffamily}
+{\thesubsection\hspace{1.75cm}}
+{0pt}
+{}
+[\vspace{-6pt}]
+
+\titleformat{\subsubsection}[hang]
+{\fontsize{12}{14.4}\bfseries\sffamily}
+{}
+{0pt}
+{}
+[\vspace{-6pt}]
+
+% Abstände vor und nach Überschriften
+\titlespacing*{\chapter}{0pt}{18pt}{12pt}
+\titlespacing*{\section}{0pt}{18pt}{6pt}
+\titlespacing*{\subsection}{0pt}{18pt}{6pt}
+\titlespacing*{\subsubsection}{0pt}{6pt}{6pt}
+
+% Aufzählungen
+\setlist[itemize]{
+    leftmargin=*,
+    itemsep=6pt,
+    parsep=0pt,
+    topsep=0pt,
+    partopsep=0pt
+}
+
+% Beschriftungen
+\captionsetup{
+    font={size=\footnotesize,stretch=1,sf},
+    justification=centering,
+    skip=6pt,
+    belowskip=18pt,
+    size=\footnotesize
+}
+
+% Tabellenbeschriftung oben
+\captionsetup[table]{position=top}
+
+% Bildbeschriftung unten
+\captionsetup[figure]{position=bottom}
+
+% Nummerierung mit Kapitelnummer
+\renewcommand{\thefigure}{\thechapter.\arabic{figure}}
+\renewcommand{\thetable}{\thechapter.\arabic{table}}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+
+% Römische Seitenzahlen für Vorspann
+\pagenumbering{roman}
+
+\begin{document}
+
+% Titelseite (Beispiel)
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+{\huge\bfseries INF-1 PicoGo Praktikum Dokumentation}\\[2cm]
+{\Large Bruce Weber}\\[1cm]
+{\large \date{03.11.2025}}
+\end{titlepage}
+
+% Inhaltsverzeichnis
+\tableofcontents
+\newpage
+
+% Arabische Seitenzahlen ab hier
+\pagenumbering{arabic}
+
+% Beispielinhalt
+\chapter{Aufgabenstellung}
+Dies ist die Einleitung der Arbeit.
+
+\section{Materialliste}
+So ein PICO GO set. Und noch paar folien auf moodle oder so. Aber ich glaube das wars
+
+\section{Bereitgestellte Programme}
+Voll krasse funktionalitäten wie $MotorControl.forward$\\
+wow so packt man code in latex:
+\begin{lstlisting}[language=Python, caption= Krasser Codeausschnitt mit Caption]
+class MotorControl(object):
+    ...
+    def forward(self,speed):
+            if((speed >= 0) and (speed <= 100)):
+                self.PWMA.duty_u16(int(speed*0xFFFF/100))
+                self.PWMB.duty_u16(int(speed*0xFFFF/100))
+                self.AIN2.value(1)
+                self.AIN1.value(0)
+                self.BIN2.value(1)
+                self.BIN1.value(0)
+\end{lstlisting}
+Die machen es uns Studenten so leicht die programme zu schreiben. Vielen Danke herr dr prof.
+
+\chapter{Durchführung}
+\section{Zusammenbauen}
+Joah, kit halt zusammengesteckt, auf kosmetik hatten wir nicht wirklich bock
+
+\section{Lösungsansätze}
+\subsection{Objektorientierte Programmierung}
+
+Voll krass, man nimmt so objekte aus realitäht, sagt: "Das (Klasse) ist (Instanz), hat das (Attribute), und kann sowas (Methode)".
+So wie "Das Auto(Instanz) vom Modell ...(Klasse) hat einen Kofferraum (Attribut) und kann die KofferraumTür öffnen (Methode)
+
+Modular, wenn seperation of concern gefolgt wird. Leicht erweiterbar ohne zu modifizieren.
+
+Vorteile:
+    Leicht verständlich, realer bezug
+Nachteile:
+    Oft speicherintensiv, nicht sehr effizient
+    
+\subsection{State Machine}
+Es gibt zustände, wenn man in einem zustand ist, dann macht man erstmal etwas, und es gibt konditionen in denen sich der zustand ändert, dann ändert sich der zustand.
+
+\subsection{Model View Control}
+Model: Übernimmt logik
+Control: Verbindet Model und View
+View: Für den Nutzer
+
+Nutzer für das Auto Program ist ein programmierer.
+Auto funktionalitäten sollten leicht nutzbar sein, debuggen leicht, Seperation of Concern
+
+
+\section{Lösung}
+
+Github: https://github.com/BruceWeberStudHSNR/InfoPicoGo
+
+Hier abschnitte von Code
+View: AutoPicoGo Klasse
+
+Control: Services, führen gewünschte feature aus
+
+Modell ist in dem fall die Hardware, wird von COntrollern/Servicen angesteuert
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\linewidth]{}
+    \caption{Hier noch krasse Bild vom Auto}
+    \label{fig:placeholder}
+\end{figure}
+
+
+% Beispiel für Aufzählung
+\begin{itemize}
+\item Erster Punkt,
+\item Zweiter Punkt,
+\item Dritter Punkt.
+\end{itemize}
+
+% Beispiel für Abbildung
+\begin{figure}[h]
+\centering
+\rule{5cm}{3cm} % Platzhalter für Bild
+\caption{Beispielabbildung}
+\label{fig:beispiel}
+\end{figure}
+
+% Beispiel für Tabelle
+\begin{table}[h]
+\caption{Beispieltabelle}
+\label{tab:beispiel}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+Spalte 1 & Spalte 2 \\
+\hline
+Wert 1 & Wert 2 \\
+\hline
+\end{tabular}
+\end{table}
+
+% Beispiel für Formel
+\begin{equation}
+E = mc^2
+\label{eq:einstein}
+\end{equation}
+
+\chapter{Zusammenfassung}
+Wir haben so viel gelernt. 
+
+
+\end{document}
