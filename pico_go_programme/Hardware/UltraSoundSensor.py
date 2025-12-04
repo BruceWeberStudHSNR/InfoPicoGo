@@ -3,11 +3,11 @@ from machine import Pin
 
 class UltraSoundSensor():
 
-    def __init__(self, pin_in = 2, pin_out = 3):
-        self.__self.__echo = Pin(pin_out, Pin.IN)
-        self.__self.__trig = Pin(pin_in, Pin.OUT)
-        self.__self.__trig.value(0)
-        self.__self.__echo.value(0)
+    def __init__(self, pin_in = 15, pin_out = 14):
+        self.__echo = Pin(pin_out, Pin.IN)
+        self.__trig = Pin(pin_in, Pin.OUT)
+        self.__trig.value(0)
+        self.__echo.value(0)
 
     def get_distance(self):
         self.__trig.value(1)

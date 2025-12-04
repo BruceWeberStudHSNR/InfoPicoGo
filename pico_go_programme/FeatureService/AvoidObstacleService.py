@@ -2,8 +2,8 @@
 
 
 import time
-from Info.pico_go_programme.Hardware import MotorControl
-from Info.pico_go_programme.helper import has_time_elapsed
+from Hardware import MotorControl
+from helper import has_time_elapsed
 
 
 class AvoidObstacleService():

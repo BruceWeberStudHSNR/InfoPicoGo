@@ -1,7 +1,7 @@
 
-from Info.pico_go_programme.Hardware import TRSensor,MotorControl, UltraSoundSensor, Buzzer
+from Hardware import TRSensor,MotorControl, UltraSoundSensor, Buzzer
 import time
-from Info.pico_go_programme.FeatureService import AvoidObstacleService, LineFollowService
+from FeatureService import AvoidObstacleService, LineFollowService
 
 
 class AutoPicoGo():

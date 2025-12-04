@@ -1,7 +1,7 @@
 
 
 import time
-from Info.pico_go_programme.Hardware import TRSensor, MotorControl
+from Hardware import TRSensor, MotorControl
 
 class LineFollowService():
     def __init__(self, IRSensor=None, Motor=None, forward_speed=0, time_service=None, dash_time=2000, turn_time=1000):
