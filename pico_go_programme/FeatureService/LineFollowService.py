@@ -1,17 +1,18 @@
 
 
 import utime
-from Hardware import TRSensor, MotorControl
+from Hardware import TRSensor, MotorControl, LEDControl
 
 def has_time_elapsed(current_time, start_time, threshhold):
     return (current_time - start_time) >= threshhold
 
 class LineFollowService():
-    def __init__(self, IRSensor=None, Motor=None, forward_speed=0, time_service=None, dash_time=2000, turn_time=1000):
+    def __init__(self, IRSensor=None, Motor=None, forward_speed=0, time_service=None, dash_time=2000, turn_time=1000, LED=None):
         # compatible constructor: (IRSensor, Motor, forward_speed)
         self.__IRSensor = IRSensor if IRSensor is not None else TRSensor.TRSensor()
         self.__Motor = Motor if Motor is not None else MotorControl.MotorControl()
         self.__time_service = time_service if time_service is not None else utime
+        self.__Led = LED if LED is not None else LEDControl.LEDControl()
                 
         self.__last_line_position = 0
         self.forward_speed = forward_speed
@@ -43,12 +44,18 @@ class LineFollowService():
         
         # Alternate between dashing forward and turning right to find the line
         if (self.__searching_state == "DASHING"):
+            print("YELLOW")
+            self.__Led.pixels_fill(self.__Led.YELLOW)
+            self.__Led.pixels_show()
             if (current_time - self.__searching_timer) < self.__searching_dash_time:
                 self.__Motor.forward(self.forward_speed)
             else:
                 self.__searching_state = "TURNING"
                 self.__searching_timer = current_time
         elif (self.__searching_state == "TURNING"):
+            print("BLUE")
+            self.__Led.pixels_fill(self.__Led.BLUE)
+            self.__Led.pixels_show()
             if (current_time - self.__searching_timer) < self.__searching_turn_time:
                 self.__Motor.right(self.forward_speed)
             else:
@@ -67,6 +74,8 @@ class LineFollowService():
     
     def drive_along_line(self, position, last_position):
         print("Drive along line")
+        self.__Led.pixels_fill(self.__Led.GREEN)
+        self.__Led.pixels_show()
         self.__line_state = "ON_LINE"
         motor_power_left, motor_power_right = self.__calculate_motor_power(position, last_position, self.forward_speed)
         self.__Motor.setMotor(motor_power_left,motor_power_right)
