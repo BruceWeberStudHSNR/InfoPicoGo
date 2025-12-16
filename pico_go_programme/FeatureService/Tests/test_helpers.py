@@ -95,6 +95,7 @@ class TimeServiceStub:
 
     def advance(self, ms):
         self._time += ms
+        print ("advance",self._time)
 
 
 class SensorStub:

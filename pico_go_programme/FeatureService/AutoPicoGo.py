@@ -29,6 +29,8 @@ class AutoPicoGo():
     def run(self):
         self.drive()
 
+        self.update()
+
     def calibrate(self):
         print("Calibrate Start")
         for i in range(100):
@@ -47,6 +49,11 @@ class AutoPicoGo():
         print("Car Action: ",self.__car_action)
         if (self.is_checking_for_obstacles):
             self.__UltraSoundObstacleDetection.detect_obstacle()
+            if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
+                self.__LedControl.pixels_fill(self.__LedControl.RED)
+            else:
+                self.__LedControl.pixels_fill(self.__LedControl.GREEN)
+        self.__LedControl.pixels_show()
 
         if(self.__car_action == "FOLLOW_LINE"):
             self.__follow_line()
@@ -68,6 +75,8 @@ class AutoPicoGo():
             else:
                 self.__AvoidObstacleService.drive_around_obstacle()
 
+    def update(self):
+        self.update_leds()
 
-
-
+    def update_leds(self):
+        self.__LedControl.pixels_show()

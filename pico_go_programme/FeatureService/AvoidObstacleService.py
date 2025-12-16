@@ -17,7 +17,7 @@ class AvoidObstacleService():
         
         
         self.__avoiding_state = "SEARCHING" # "SEARCHING" / "DRIVING" / "AVOIDING"
-        self.__dash_time = 2000
+        self.__dash_time = 1000
         self.__dash_timer = 0
 
         self.__LEDControl = LedControl if LedControl is not None else LEDControl.LEDControl()
@@ -30,15 +30,6 @@ class AvoidObstacleService():
     def drive_around_obstacle(self):
         print("drive around obstacle", self.__avoiding_state)
         current_time = self.__TimeService.ticks_ms()
-
-        self.__UltraSoundObstacleDetection.detect_obstacle()
-
-        if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
-            self.__LEDControl.pixels_fill(self.__LEDControl.RED)
-        else:
-            self.__LEDControl.pixels_fill(self.__LEDControl.BLUE)
-        
-        self.__LEDControl.pixels_show()
 
         print("avoiding state: ", self.__avoiding_state)
         if (self.__dash_timer == 0):

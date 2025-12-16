@@ -6,7 +6,7 @@ class UltraSoundObstacleDetection():
                 TimeService,
                 obstacle_forget_time = 2000,
                 obstacle_recognition_time = 3000,
-                obstacle_recognition_distance = 20 ):
+                obstacle_recognition_distance = 40 ):
         self.__obstacle_forget_time =  obstacle_forget_time
         self.__obstacle_recognition_time =obstacle_recognition_time
         self.__obstacle_recognition_start_time =0
@@ -32,6 +32,7 @@ class UltraSoundObstacleDetection():
 
     def scan_front_distance(self):
         distance = self.__Sensor.get_distance()
+        print("Distance", distance)
         return distance
 
     def is_obstacle_in_sight(self, distance):

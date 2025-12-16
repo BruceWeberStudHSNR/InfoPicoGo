@@ -7,7 +7,7 @@ def has_time_elapsed(current_time, start_time, threshhold):
     return (current_time - start_time) >= threshhold
 
 class LineFollowService():
-    def __init__(self, IRSensor=None, Motor=None, forward_speed=0, time_service=None, dash_time=2000, turn_time=1000, LED=None):
+    def __init__(self, IRSensor=None, Motor=None, forward_speed=100, time_service=None, dash_time=2000, turn_time=1000, LED=None):
         # compatible constructor: (IRSensor, Motor, forward_speed)
         self.__IRSensor = IRSensor if IRSensor is not None else TRSensor.TRSensor()
         self.__Motor = Motor if Motor is not None else MotorControl.MotorControl()
@@ -29,7 +29,6 @@ class LineFollowService():
         
         if (self.__sees_line(line_sensore_values)):
             # self.__Led.pixels_fill(self.__Led.GREEN)
-            # self.__Led.pixels_show()
 
             self.drive_along_line(position, self.__last_line_position)
         else:
@@ -39,9 +38,7 @@ class LineFollowService():
         self.__last_line_position = position
             
     def search_for_line(self):
-        print("Search for Line")
         current_time = self.__time_service.ticks_ms()
-
 
         if (self.__line_state != "SEARCHING"):
             self.__searching_timer = current_time
@@ -63,7 +60,7 @@ class LineFollowService():
             # self.__Led.pixels_fill(self.__Led.BLUE)
             # self.__Led.pixels_show()
             if (not has_time_elapsed(current_time, self.__searching_timer, self.__searching_turn_time)):
-                self.__Motor.right(self.forward_speed)
+                self.__Motor.right(self.forward_speed/5)
             else:
                 self.__searching_state = "DASHING"
                 self.__searching_timer = current_time
@@ -76,12 +73,10 @@ class LineFollowService():
     
     def __sees_line(self,line_sensore_values):
         isSeeing = (line_sensore_values[0] + line_sensore_values[1] + line_sensore_values[2]+ line_sensore_values[3]+ line_sensore_values[4]) < 900
-        print("sees line",isSeeing, line_sensore_values[0] + line_sensore_values[1] + line_sensore_values[2]+ line_sensore_values[3]+ line_sensore_values[4])
         print(line_sensore_values)
         return isSeeing
     
     def drive_along_line(self, position, last_position):
-        print("Drive along line")
         
         self.__line_state = "ON_LINE"
         motor_power_left, motor_power_right = self.__calculate_motor_power(position, last_position, self.forward_speed)
@@ -91,8 +86,6 @@ class LineFollowService():
     def __calculate_motor_power(self,position, last_position, max_power):
         left = 0
         right = 0
-
-        max_power = 60
 
         direction = position - 2000
         last_direction = last_position - 2000
