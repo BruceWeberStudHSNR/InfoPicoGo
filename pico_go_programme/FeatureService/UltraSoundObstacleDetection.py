@@ -22,10 +22,8 @@ class UltraSoundObstacleDetection():
         self.__TimeService = TimeService
 
     def detect_obstacle(self):
-        print("Detect Obstacle")
         front_distance = self.scan_front_distance()
         current_time = self.__TimeService.ticks_ms()
-
         if (self.is_obstacle_in_sight(front_distance)):
             self.see_obstacle(current_time)
         else:
@@ -43,14 +41,11 @@ class UltraSoundObstacleDetection():
         if (self.is_seeing_obstacle):
             self.__obstacle_recognition_start_time = current_time
             self.is_seeing_obstacle = False
-            print("Forget obstacle start")
         else:
             if (has_time_elapsed(current_time, self.__obstacle_recognition_start_time,self.__obstacle_forget_time )):
-                print("Forget obstacle end")
-                self.is_remembering_obstacle = False
+                    self.is_remembering_obstacle = False
     
     def see_obstacle(self, current_time):
-        print("See Obstacle")
         if (not self.is_seeing_obstacle):
             self.__obstacle_recognition_start_time = current_time
             self.is_seeing_obstacle = True
@@ -59,7 +54,7 @@ class UltraSoundObstacleDetection():
 
     def remember_obstacle(self, current_time):
         if (has_time_elapsed(current_time, self.__obstacle_recognition_start_time, self.__obstacle_recognition_time)):
-            print("remember obstacle")
+            self.__obstacle_recognition_start_time = current_time
             self.is_remembering_obstacle = True
 
     def get_obstacle_state(self):

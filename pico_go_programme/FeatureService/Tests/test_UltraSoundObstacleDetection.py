@@ -31,11 +31,52 @@ class TestUltraSoundObstacleDetection(unittest.TestCase):
         self.sensor.set_distance(5)
         self.instance.detect_obstacle()
 
-        self.time.advance(3000)
+        self.time.advance(2000)
 
         self.instance.detect_obstacle()
 
         self.assertTrue(self.instance.is_remembering_obstacle)
+
+    def test_will_forget_obstacle(self):
+        self.instance.is_remembering_obstacle = True
+        self.assertTrue(self.instance.is_remembering_obstacle)
+        
+        self.sensor.set_distance(4000)
+        self.instance.detect_obstacle()
+        self.assertFalse(self.instance.is_seeing_obstacle)
+                                  
+        self.time.advance(1001)
+        self.instance.detect_obstacle()
+
+        self.assertFalse(self.instance.is_remembering_obstacle)
+
+    def test_remember_obstacle_for_given_time(self):
+        self.instance.is_remembering_obstacle = True
+
+        self.sensor.set_distance(4000)
+
+        self.instance.detect_obstacle()
+
+        self.assertTrue(self.instance.is_remembering_obstacle)
+        self.assertFalse(self.instance.is_seeing_obstacle)
+
+        self.time.advance(500)
+
+        self.instance.detect_obstacle()
+
+        self.assertTrue(self.instance.is_remembering_obstacle)
+        self.assertFalse(self.instance.is_seeing_obstacle)
+
+        self.time.advance(501)
+
+        self.instance.detect_obstacle()
+
+        self.assertFalse(self.instance.is_remembering_obstacle)
+        self.assertFalse(self.instance.is_seeing_obstacle)
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
