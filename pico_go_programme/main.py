@@ -3,7 +3,7 @@ from machine import Pin
 
 ###################Pin Config###################
 
-
+###################Car Settings####################
 
 autoPicoGo = AutoPicoGo()
 
