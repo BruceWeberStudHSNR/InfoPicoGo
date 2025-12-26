@@ -1,13 +1,13 @@
 from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl
 from machine import Pin
-from AutoFeatures import LineFollowService,AvoidObstacleService, UltraSoundObstacleDetection
+from AutoFeatures import LineFollowService,AvoidObstacleService, UltraSoundObstacleDetection, PicoPilot
 import utime
 
 
 class AutoPicoGo():
     def __init__(self, 
                  forward_speed=20, 
-                 turn_speed=25, 
+                 turn_speed=15, 
                  is_checking_for_obstacles=True,
                  Motor=None,
                  Tr_sensor=None,
@@ -27,6 +27,10 @@ class AutoPicoGo():
         self.__LedControl = Led if Led is not None else LEDControl.LEDControl()
         self.__USSensor = Ultra_sound if Ultra_sound is not None else UltraSoundSensor.UltraSoundSensor()
 
+        self.__Pilot = PicoPilot.PicoPilot(
+            Motor=self.__Motor,
+            TimeService=utime
+        )
         # self.__Buzzer = buzzer if buzzer is not None else Buzzer.Buzzer()
         # --- 2) instantiate services, passing hardware instances ---
         self.__TimeService = utime
@@ -53,7 +57,7 @@ class AutoPicoGo():
 
         self.update()
 
-    def calibrate(self):
+    def calibrate_line_sensors(self):
         print("Calibrate Start")
         for i in range(100):
             if(i<25 or i>= 75):
@@ -65,18 +69,9 @@ class AutoPicoGo():
         print ("Calibrate End")
 
     def drive(self):
-        # if (self.__car_action == "IDLE"):
-        #     # maybe check for controller change when implemented
-        #     pass
-        print("Car Action: ",self.__car_action)
         if (self.is_checking_for_obstacles):
             self.__UltraSoundObstacleDetection.detect_obstacle()
-            if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
-                self.__LedControl.pixels_fill(self.__LedControl.RED)
-            else:
-                self.__LedControl.pixels_fill(self.__LedControl.GREEN)
-        self.__LedControl.pixels_show()
-
+            
         if(self.__car_action == "FOLLOW_LINE"):
             self.__follow_line()
         elif(self.__car_action == "DRIVE_AROUND_OBSTACLE"):
@@ -97,7 +92,31 @@ class AutoPicoGo():
                 self.__AvoidObstacleService.drive_around_obstacle()
 
     def update(self):
-        self.update_leds()
+        self.update_leds("OBSTACLE")
 
-    def update_leds(self):
+    def update_leds(self, display):
+        if (display is None):
+            return
+        if display == "SEEING_OBSTACLE":
+            self.set_pixels_seeing_obstacle()
+        elif display == "AVOIDING_OBSTACLE":
+            self.set_pixels_avoiding_obstacle()
+        # elif display == "LINE":         
+        
         self.__LedControl.pixels_show()
+        
+    def set_pixels_avoiding_obstacle(self):
+        if (self.__AvoidObstacleService.avoiding_state == "SEARCHING"):
+            self.__LedControl.pixels_fill(self.__LedControl.BLUE)
+        elif (self.__AvoidObstacleService.avoiding_state == "AVOIDING"):
+            self.__LedControl.pixels_fill(self.__LedControl.RED)
+        elif (self.__AvoidObstacleService.avoiding_state == "DRIVING"):
+            self.__LedControl.pixels_fill(self.__LedControl.GREEN)
+        
+    def set_pixels_seeing_obstacle(self):
+        if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
+            self.__LedControl.pixels_fill(self.__LedControl.RED)
+        else:
+            self.__LedControl.pixels_fill(self.__LedControl.GREEN)
+        
+    

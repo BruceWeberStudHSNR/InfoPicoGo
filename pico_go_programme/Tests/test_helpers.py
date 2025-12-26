@@ -50,6 +50,7 @@ if 'rp2' not in sys.modules:
 
     class _PIO:
         OUT_LOW = 0
+        SHIFT_LEFT = 0
 
     class _StateMachine:
         def __init__(self, id, asm, freq=0, sideset_base=None, out_base=None, in_base=None):
@@ -96,6 +97,9 @@ class TimeServiceStub:
     def advance(self, ms):
         self._time += ms
         print ("advance",self._time)
+        
+    def set_ticks_ms(self, t):
+        self._time = t
 
 
 class SensorStub:
@@ -107,19 +111,6 @@ class SensorStub:
 
     def set_distance(self, d):
         self._distance = d
-        
-    
-
-
-class MotorStub:
-    def __init__(self):
-        self.commands = []
-        self.forward = Mock()
-        self.right = Mock()
-
-    def setMotor(self, left, right):
-        self.commands.append((left, right))
-        
 
 
 class BuzzerStub:

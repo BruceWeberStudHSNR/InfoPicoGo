@@ -4,7 +4,7 @@ from Hardware_Mocks import MockTRSensor,MockUltraSoundSensor
 
 autoPicoGo = None
 
-def setUpAuto(mock=False):
+def autoFactory(mock=False):
     forward_speed=20, 
     turn_speed=25, 
     is_checking_for_obstacles=True,
@@ -12,8 +12,7 @@ def setUpAuto(mock=False):
     Led=LEDControl.LEDControl(),
     Buzzer_=Buzzer.Buzzer()
     Ultra_sound=None,
-    Tr_sensor=None,
-    
+    Tr_sensor=None
     if (mock):
         Tr_sensor = MockTRSensor.MockTRSensor()
         Ultra_sound = MockUltraSoundSensor.MockUltraSoundSensor()
@@ -32,10 +31,11 @@ def setUpAuto(mock=False):
         Buzzer=Buzzer_)
     return autoPicoGo
 
-autoPicoGo = setUpAuto(True)
+autoPicoGo = autoFactory()
+
 assert autoPicoGo is not None, "IRSensor instance required"
 
-autoPicoGo.calibrate()
+autoPicoGo.calibrate_line_sensors()
 
 while True:
     autoPicoGo.run()
