@@ -1,5 +1,5 @@
-from FeatureService.Tests import test_helpers
-from FeatureService import UltraSoundObstacleDetection
+from AutoFeatures.Tests import test_helpers
+from AutoFeatures import UltraSoundObstacleDetection
 
 import unittest
 

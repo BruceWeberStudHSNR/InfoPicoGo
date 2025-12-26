@@ -1,3 +1,5 @@
+from machine import Pin
+
 class Buzzer ():
     def __init__ (self):
         self.buzzer_pin = Pin(15, Pin.OUT)

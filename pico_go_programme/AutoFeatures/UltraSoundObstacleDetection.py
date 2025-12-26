@@ -2,8 +2,8 @@ from helper import has_time_elapsed
 
 class UltraSoundObstacleDetection():
     def __init__(self, 
-                 UltraSoundSensor,
-                TimeService,
+                 UltraSoundSensor = None,
+                TimeService = None,
                 obstacle_forget_time = 2000,
                 obstacle_recognition_time = 3000,
                 obstacle_recognition_distance = 40 ):

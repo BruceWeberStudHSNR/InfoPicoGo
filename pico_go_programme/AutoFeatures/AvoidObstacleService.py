@@ -2,9 +2,9 @@
 
 
 import utime
-from Hardware import MotorControl, LEDControl, UltraSoundSensor
+from Hardware import MotorControl, LEDControl
 from helper import has_time_elapsed
-from FeatureService import UltraSoundObstacleDetection
+from AutoFeatures import UltraSoundObstacleDetection
 
 
 class AvoidObstacleService():
@@ -14,7 +14,6 @@ class AvoidObstacleService():
                 motor=None,
                 LedControl=None,
                 UltrasoundObstacleDetection=None):
-        
         
         self.__avoiding_state = "SEARCHING" # "SEARCHING" / "DRIVING" / "AVOIDING"
         self.__dash_time = 1000
@@ -50,14 +49,14 @@ class AvoidObstacleService():
         # self.__LEDControl.pixels_show()
             
     def turn_to_obstacle(self):
-        self.__Motor.right(25)
+        self.__Motor.right(10)
                     
         if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
             self.__avoiding_state = "AVOIDING"
             self.__dash_timer = 0
             
     def turn_away_from_obstacle(self):
-        self.__Motor.left(25)
+        self.__Motor.left(10)
     
         if (not self.__UltraSoundObstacleDetection.is_seeing_obstacle):
             self.__avoiding_state = "DRIVING"
@@ -65,7 +64,7 @@ class AvoidObstacleService():
             
     def drive_forward(self, current_time):
         if has_time_elapsed(current_time, self.__dash_timer, self.__dash_time):
-            self.__Motor.forward(25)
+            self.__Motor.forward(50)
             
         else:
             self.__avoiding_state = "SEARCHING"

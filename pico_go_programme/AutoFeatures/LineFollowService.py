@@ -1,19 +1,27 @@
 
 
-import utime
-from Hardware import TRSensor, MotorControl, LEDControl
+from Hardware import TRSensor, MotorControl
 
 def has_time_elapsed(current_time, start_time, threshhold):
     return (current_time - start_time) >= threshhold
 
 class LineFollowService():
-    def __init__(self, IRSensor=None, Motor=None, forward_speed=100, time_service=None, dash_time=2000, turn_time=1000, LED=None):
+    def __init__(self, 
+                 IRSensor=None, 
+                 Motor=None, 
+                 forward_speed=100, 
+                 time_service=None, 
+                 dash_time=2000, 
+                 turn_time=1000):
         # compatible constructor: (IRSensor, Motor, forward_speed)
-        self.__IRSensor = IRSensor if IRSensor is not None else TRSensor.TRSensor()
-        self.__Motor = Motor if Motor is not None else MotorControl.MotorControl()
-        self.__time_service = time_service if time_service is not None else utime
-        self.__Led = LED if LED is not None else LEDControl.LEDControl()
-                
+        assert Motor is not None, "MotorControl instance required"
+        assert time_service is not None, "TimeService instance required"
+        assert IRSensor is not None, "IRSensor instance required"
+
+        self.__IRSensor = IRSensor    
+        self.__Motor = Motor 
+        self.__time_service = time_service 
+
         self.__last_line_position = 0
         self.forward_speed = forward_speed
         self.__line_state = "SEARCHING" # "SEARCHING" or "ON_LINE"
