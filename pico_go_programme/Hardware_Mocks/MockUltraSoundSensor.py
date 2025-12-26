@@ -1,5 +1,5 @@
 
-class UltraSoundSensor():
+class MockUltraSoundSensor():
 
     def __init__(self, pin_in=14, pin_out=15):
         self._distance = 0

@@ -1,4 +1,4 @@
-from Hardware import MotorControl, TRSensor, UltraSoundSensor, Buzzer, LEDControl
+from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl
 from machine import Pin
 from AutoFeatures import LineFollowService,AvoidObstacleService, UltraSoundObstacleDetection
 import utime
@@ -9,6 +9,11 @@ class AutoPicoGo():
                  forward_speed=20, 
                  turn_speed=25, 
                  is_checking_for_obstacles=True,
+                 Motor=None,
+                 Tr_sensor=None,
+                 Led=None,
+                 Ultra_sound=None,
+                 Buzzer=None
     ):
         self.forward_speed = forward_speed
         self.turn_speed = turn_speed
@@ -16,10 +21,12 @@ class AutoPicoGo():
         self.__car_action = "FOLLOW_LINE" #"FOLLOW_LINE" # / "DRIVE_AROUND_OBSTACLE" / "RETURN_TO_LINE" 
         self.is_checking_for_obstacles=is_checking_for_obstacles
 
-        self.__Motor = MotorControl.MotorControl()
-        self.__IRSensor = TRSensor.TRSensor()
-        self.__LedControl = LEDControl.LEDControl()
-        self.__USSensor = UltraSoundSensor.UltraSoundSensor()
+        # Use passed Hardware classes or instantiate default
+        self.__Motor = Motor if Motor is not None else MotorControl.MotorControl()
+        self.__IRSensor = Tr_sensor if Tr_sensor is not None else TRSensor.TRSensor()
+        self.__LedControl = Led if Led is not None else LEDControl.LEDControl()
+        self.__USSensor = Ultra_sound if Ultra_sound is not None else UltraSoundSensor.UltraSoundSensor()
+
         # self.__Buzzer = buzzer if buzzer is not None else Buzzer.Buzzer()
         # --- 2) instantiate services, passing hardware instances ---
         self.__TimeService = utime

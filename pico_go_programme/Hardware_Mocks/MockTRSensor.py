@@ -1,5 +1,5 @@
 
-class TRSensor():
+class MockTRSensor():
     def __init__(self):
         self.__mockAnalogRead = 0
         self.__mockPosition = 0
