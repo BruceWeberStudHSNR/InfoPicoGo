@@ -17,8 +17,8 @@ class MockTRSensor():
     def readCalibrated(self):
         return self.__mockSensorValues
     
-    def setCalibrated(self, value):
-        self.__mockSensorValues = value
+    def setCalibrated(self, values):
+        self.__mockSensorValues = values
 
     def setPosition(self,value):
         self.__mockPosition = value

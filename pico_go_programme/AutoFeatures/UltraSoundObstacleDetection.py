@@ -10,7 +10,7 @@ class UltraSoundObstacleDetection():
                 obstacle_recognition_distance = 40,
                 ):
         self.__obstacle_forget_time =  obstacle_forget_time
-        self.__obstacle_remember_time =obstacle_recognition_time
+        self.__obstacle_remember_time =obstacle_remember_time
         self.__obstacle_recognition_time = obstacle_recognition_time
         self.__obstacle_recognition_distance =obstacle_recognition_distance
         

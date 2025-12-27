@@ -32,7 +32,8 @@ class AvoidObstacleService():
     
     def drive_around_obstacle(self):
         print("drive around obstacle", self.avoiding_state)
-        current_time = self.__TimeService.ticks_ms()
+        self.__UltraSoundObstacleDetection.detect_obstacle()
+        current_time = self.__TimeService.ticks_ms() # Get time after measurement, because of blocking ultrasonic measurement                                                                                                 
 
 
         if (self.avoiding_state == "SEARCHING"):
@@ -44,17 +45,16 @@ class AvoidObstacleService():
         elif (self.avoiding_state == "DRIVING"):
             self.drive_forward(current_time)
 
-            
     def turn_to_obstacle(self):
         self.__Pilot.go(direction="LEFT", speed=10)
                     
-        if (self.__UltraSoundObstacleDetection.is_seeing_obstacle):
+        if (self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("AVOIDING")
             
     def turn_away_from_obstacle(self):
         self.__Pilot.go(direction="RIGHT", speed=10)
 
-        if (not self.__UltraSoundObstacleDetection.is_seeing_obstacle):
+        if (not self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("DRIVING")
             
     def drive_forward(self, current_time):

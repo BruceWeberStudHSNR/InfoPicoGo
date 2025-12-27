@@ -7,100 +7,65 @@ def has_time_elapsed(current_time, start_time, threshhold):
 
 class LineFollowService():
     def __init__(self, 
-                 IRSensor=None, 
-                 Motor=None, 
-                 forward_speed=100, 
-                 time_service=None, 
+                 Pilot, 
+                 LineDetection,
+                 TimeService,
                  dash_time=2000, 
                  turn_time=1000):
-        # compatible constructor: (IRSensor, Motor, forward_speed)
-        assert Motor is not None, "MotorControl instance required"
-        assert time_service is not None, "TimeService instance required"
-        assert IRSensor is not None, "IRSensor instance required"
-
-        self.__IRSensor = IRSensor    
-        self.__Motor = Motor 
-        self.__time_service = time_service 
+        self.__Pilot = Pilot
+        self.__LineDetection = LineDetection
+        self.__TimeService = TimeService 
 
         self.__last_line_position = 0
-        self.forward_speed = forward_speed
-        self.__line_state = "SEARCHING" # "SEARCHING" or "ON_LINE"
         
         # Parameters for searching behaviour (maybe own class later)
         self.__searching_dash_time = dash_time
         self.__searching_turn_time = turn_time
-        self.__searching_timer = 0
-        self.__searching_state = "DASHING" # "DASHING" or "TURNING"
+        self.searching_state = "DASHING" # "DASHING" or "TURNING"
         
-    def follow_line_with_search(self):
-        position, line_sensore_values = self.__IRSensor.readLine()
+    def follow_line(self, current_time):
+        position, _ = self.__LineDetection.detect_line(current_time)
         
-        if (self.__sees_line(line_sensore_values)):
-            # self.__Led.pixels_fill(self.__Led.GREEN)
-
+        if (self.__LineDetection.is_recognizing_line):
             self.drive_along_line(position, self.__last_line_position)
+            
         else:
-
             self.search_for_line()
-            
-        self.__last_line_position = position
-            
-    def search_for_line(self):
-        current_time = self.__time_service.ticks_ms()
-
-        if (self.__line_state != "SEARCHING"):
-            self.__searching_timer = current_time
-            
-        self.__line_state = "SEARCHING" # "SEARCHING" or "ON_LINE"
         
+        self.__last_line_position = position
+        
+    def search_for_line(self):        
         # Alternate between dashing forward and turning right to find the line
-        if (self.__searching_state == "DASHING"):
-            # print("YELLOW")
-            # self.__Led.pixels_fill(self.__Led.YELLOW)
-            # self.__Led.pixels_show()
-            if (not has_time_elapsed(current_time, self.__searching_timer, self.__searching_dash_time)):
-                self.__Motor.forward(self.forward_speed)
-            else:
-                self.__searching_state = "TURNING"
-                self.__searching_timer = current_time
-        elif (self.__searching_state == "TURNING"):
-            # print("BLUE")
-            # self.__Led.pixels_fill(self.__Led.BLUE)
-            # self.__Led.pixels_show()
-            if (not has_time_elapsed(current_time, self.__searching_timer, self.__searching_turn_time)):
-                self.__Motor.right(self.forward_speed/5)
-            else:
-                self.__searching_state = "DASHING"
-                self.__searching_timer = current_time
+        if (self.searching_state == "DASHING"):
+            self.__Pilot.go_direction_for_ms("FORWARD", self.__searching_dash_time, speed=self.__Pilot.default_speed/2)
+            self.__update_searching_state("TURNING")
 
-    def is_on_line(self):
-        return self.__line_state == "ON_LINE"
-
-    def get_line_state(self):
-        return self.__line_state
-    
-    def __sees_line(self,line_sensore_values):
-        isSeeing = (line_sensore_values[0] + line_sensore_values[1] + line_sensore_values[2]+ line_sensore_values[3]+ line_sensore_values[4]) < 900
-        print(line_sensore_values)
-        return isSeeing
+        elif (self.searching_state == "TURNING"):
+            self.__Pilot.go_direction_for_ms("RIGHT", self.__searching_turn_time, speed=self.__Pilot.default_speed/2)
+            self.__update_searching_state("DASHING")
     
     def drive_along_line(self, position, last_position):
-        
-        self.__line_state = "ON_LINE"
-        motor_power_left, motor_power_right = self.__calculate_motor_power(position, last_position, self.forward_speed)
-        self.__Motor.setMotor(motor_power_left,motor_power_right)
+        motor_power_left, motor_power_right = self.__calculate_motor_power_to_line(position, last_position,self.__Pilot.default_speed)
+        self.__Pilot.set_wheels(motor_power_left,motor_power_right)
 
+    def __update_searching_state(self, new_state):
+        if (self.__Pilot.has_stopped):
+            self.searching_state = new_state
+            
 
-    def __calculate_motor_power(self,position, last_position, max_power):
+    def __calculate_motor_power_to_line(self,position, last_position, max_power):
         left = 0
         right = 0
+        
+        correction_factor = 30 # Higher = More aggressive turning towards line
+        inertia = 2      # Higher = More smoothing of direction changes
 
         direction = position - 2000
         last_direction = last_position - 2000
 
         change_in_direction = direction - last_direction
 
-        power_difference = direction/30  + change_in_direction*2;  
+        power_difference = direction/correction_factor  + change_in_direction*inertia;  
 
         if (power_difference > max_power):
             power_difference = max_power

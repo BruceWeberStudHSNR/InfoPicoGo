@@ -1,0 +1,58 @@
+from helper import has_time_elapsed
+
+class LineDetection:
+    def __init__(self, TRSensor, TimeService, on_line_threshold=2000, recognize_line_time=50, forget_line_time=200):
+        self.__TRSensor = TRSensor
+        self.__TimeService = TimeService
+        self.__on_line_threshold = on_line_threshold
+        self.__recognize_line_time = recognize_line_time
+        self.__time_counter = self.__TimeService.ticks_ms()
+        self.__forget_line_time = forget_line_time
+        
+        self.is_on_line = False
+        self.is_recognizing_line = False
+        
+        self.line_position = 0
+        self.line_sensor_values = []
+        
+    def __update_on_line_state(self, new_state, current_time):
+        if (self.is_on_line != new_state):
+            self.is_on_line = new_state
+            self.__time_counter = current_time
+            
+    def __update_recognizing_line_state(self, on_line, current_time, threshhold):
+        if (has_time_elapsed(current_time, self.__time_counter, threshhold)):
+            self.__time_counter = current_time
+            self.is_recognizing_line = on_line
+        
+    def detect_line(self):
+        position, line_sensore_values = self.__TRSensor.readLine() # Read 
+        current_time = self.__TimeService.ticks_ms()
+        is_on_line = self.is_line_visible(line_sensore_values)
+
+        self.__update_on_line_state(is_on_line, current_time)
+        
+        self.__update_recognizing_line_state(
+            is_on_line, 
+            current_time, 
+            self.__recognize_line_time if is_on_line else self.__forget_line_time
+            )
+
+        self.line_position = position
+        self.line_sensor_values = line_sensore_values
+        
+        return (position, line_sensore_values) 
+    
+    def is_line_visible(self,line_sensore_values):
+        average_value = sum(line_sensore_values) / len(line_sensore_values)
+        return average_value < self.__on_line_threshold
+    
+    def loose_line(self, current_time):
+        if (has_time_elapsed(current_time, self.__time_counter, self.__forget_line_time)):
+            self.__time_counter = current_time
+            self.is_recognizing_line = False
+            
+    def recognize_line(self, current_time):
+        if (has_time_elapsed(current_time, self.__time_counter, self.__recognize_line_time)):
+            self.__time_counter = current_time
+            self.is_recognizing_line = True

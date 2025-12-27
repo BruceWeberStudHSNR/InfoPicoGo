@@ -7,30 +7,34 @@ class PicoPilot:
     def __init__(self, Motor=None, TimeService=None, default_speed=50):
         self.__Motor = Motor
         self.__TimeService = TimeService
-        self.__default_speed = default_speed
+        self.default_speed = default_speed
 
-        self.__current_action = "FORWARD" # "FORWARD" / "RIGHT" / "STOP" / "LEFT" / "BACKWARD"
+        self.__current_action = "FORWARD" # "FORWARD" / "RIGHT" / "STOP" / "LEFT" / "BACKWARD" / "SET_WHEELS"
         self.__current_state_start_time = 0
+        self.has_stopped = False
         
     def set_speed(self, speed):
-        self.__default_speed = speed
+        self.default_speed = speed
         
     def __update_action(self, new_action):
         current_time = self.__TimeService.ticks_ms()
         if (self.__current_action != new_action):
             self.__current_state_start_time = current_time
             self.__current_action = new_action
+            
+        self.has_stopped = new_action == "STOP"
 
         return current_time
     
     def __use_speed_or_default(self, speed):
-        if speed is None:
-            return self.__default_speed
+        if speed is None or speed <= 0:
+            return self.default_speed
         return speed
         
     def stop(self):
         self.__Motor.stop()
         self.__update_action("STOP")
+        self.has_stopped = True
 
 
     def go_direction_for_ms(self, direction, duration_ms, speed=None):
@@ -42,8 +46,17 @@ class PicoPilot:
             self.stop()
             pass
         
+    def set_wheels_for_ms(self, left_speed, right_speed, duration_ms):
+        current_time = self.__update_action("SET_WHEELS")   
+        self.set_wheels(left_speed, right_speed)
+    
+        if has_time_elapsed(current_time, self.__current_state_start_time, duration_ms):
+            self.stop()
+            pass
+        
     def go(self, direction, speed=None):
         speed = self.__use_speed_or_default(speed)
+        
         if direction == "LEFT":
             self.left(speed)
         elif direction == "RIGHT":
@@ -75,6 +88,12 @@ class PicoPilot:
         speed = self.__use_speed_or_default(speed)
         self.__Motor.left(speed)
         self.__update_action("LEFT")
+        
+    def set_wheels(self, left_speed, right_speed):
+        self.__Motor.setMotor(left_speed, right_speed)
+        self.__update_action("SET_WHEELS")
+        
+    
         
     def get_state(self):
         return self.__current_action
