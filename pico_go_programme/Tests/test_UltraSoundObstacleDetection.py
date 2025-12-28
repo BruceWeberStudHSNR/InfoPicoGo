@@ -1,5 +1,5 @@
 from Tests import test_helpers
-from AutoFeatures import UltraSoundObstacleDetection
+from AutoFeatures import ObstacleDetection
 
 import unittest
 
@@ -9,7 +9,7 @@ class TestUltraSoundObstacleDetection(unittest.TestCase):
         self.time = test_helpers.TimeServiceStub(0)
         self.sensor = test_helpers.SensorStub(100)
         # use short times so tests run fast
-        self.instance = UltraSoundObstacleDetection.UltraSoundObstacleDetection(
+        self.instance = ObstacleDetection.ObstacleDetection(
             UltraSoundSensor=self.sensor,
             TimeService=self.time,
             obstacle_forget_time=3000,

@@ -1,5 +1,6 @@
+from Info.pico_go_programme.AutoFeatures import ObstacleDetection
 from machine import Pin
-from AutoFeatures import LineFollowService,AvoidObstacleService, UltraSoundObstacleDetection, PicoPilot,LineDetection
+from AutoFeatures import LineFollowService,AvoidObstacleService, PicoPilot,LineDetection,LightOperator
 
 class AutoPicoGo():
     def __init__(self,
@@ -29,11 +30,13 @@ class AutoPicoGo():
         self.__Buzzer = Buzzer 
         self.__TimeService = TimeService
 
-        print(self.__Motor)
         self.__Pilot = PicoPilot.PicoPilot(
             Motor=self.__Motor,
             TimeService=self.__TimeService
         )
+        
+        self.__LightOperator = LightOperator.LightOperator(
+            Led=self.__LedControl            )
         # self.__Buzzer = buzzer if buzzer is not None else Buzzer.Buzzer()
         # --- 2) instantiate services, passing hardware instances ---
 
@@ -49,7 +52,7 @@ class AutoPicoGo():
             LineDetection=self.__LineDetection,
             dash_time=2000, 
             turn_time=1000)
-        self.__UltraSoundObstacleDetection = UltraSoundObstacleDetection.UltraSoundObstacleDetection(
+        self.__UltraSoundObstacleDetection = ObstacleDetection.ObstacleDetection(
             self.__USSensor, 
             self.__TimeService)        
         self.__AvoidObstacleService = AvoidObstacleService.AvoidObstacleService(
@@ -62,9 +65,9 @@ class AutoPicoGo():
     def run(self):
         self.scan()
 
-        self.update_ui()
-
         self.act()
+
+        self.update_ui()
 
 
     def calibrate_line_sensors(self):
@@ -99,47 +102,19 @@ class AutoPicoGo():
             self.__LineFollowService.follow_line()
 
     def drive_around_obstacle(self):
-            print("Is on Line", self.__LineDetection.is_on_line)
-            if (self.__LineDetection.is_on_line):
-                self.__car_action = "FOLLOW_LINE"
-            else:
-                self.__AvoidObstacleService.drive_around_obstacle()
+        if (self.__LineDetection.is_on_line):
+            self.__car_action = "FOLLOW_LINE"
+        else:
+            self.__AvoidObstacleService.drive_around_obstacle()
 
     def update_ui(self):
-        self.update_leds(self.__led_mode)
+        self.__LightOperator.update_leds(
+            self.__led_mode, 
+            self.__AvoidObstacleService.avoiding_state, 
+            self.__UltraSoundObstacleDetection.is_remembering_obstacle, 
+            is_on_line=self.__LineDetection.is_on_line)
+        
+        #self.update_buzzer()
 
-    def update_leds(self, display):
-        if (display is None):
-            return
-        if display == "SEEING_OBSTACLE":
-            self.set_pixels_seeing_obstacle()
-        elif display == "AVOIDING_OBSTACLE":
-            self.set_pixels_avoiding_obstacle()
-        elif display == "LINE":
-            self.set_pixels_line_following()
-        
-        self.__LedControl.pixels_show()
-        
-    def set_pixels_avoiding_obstacle(self):
-        if (self.__AvoidObstacleService.avoiding_state == "SEARCHING"):
-            self.__LedControl.pixels_fill(self.__LedControl.YELLOW)
-        elif (self.__AvoidObstacleService.avoiding_state == "AVOIDING"):
-            self.__LedControl.pixels_fill(self.__LedControl.RED)
-        elif (self.__AvoidObstacleService.avoiding_state == "DRIVING"):
-            self.__LedControl.pixels_fill(self.__LedControl.BLUE)
-        
-    def set_pixels_seeing_obstacle(self):
-        if (self.__UltraSoundObstacleDetection.is_remembering_obstacle):
-            self.__LedControl.pixels_fill(self.__LedControl.RED)
-        else:
-            self.__LedControl.pixels_fill(self.__LedControl.GREEN)
-            
-    def set_pixels_line_following(self):
-        if (self.__LineFollowService.is_on_line):
-            self.__LedControl.pixels_fill(self.__LedControl.GREEN)
-        else:
-            self.__LedControl.pixels_fill(self.__LedControl.YELLOW)
-
-        self.set_pixels_avoiding_obstacle()
         
     

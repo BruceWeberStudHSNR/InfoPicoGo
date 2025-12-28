@@ -8,6 +8,7 @@ class PicoPilot:
         self.__Motor = Motor
         self.__TimeService = TimeService
         self.default_speed = default_speed
+        self.speed_levels = [20, 40, 60, 80, 100]
 
         self.__current_action = "FORWARD" # "FORWARD" / "RIGHT" / "STOP" / "LEFT" / "BACKWARD" / "SET_WHEELS"
         self.__current_state_start_time = 0
@@ -92,8 +93,6 @@ class PicoPilot:
     def set_wheels(self, left_speed, right_speed):
         self.__Motor.setMotor(left_speed, right_speed)
         self.__update_action("SET_WHEELS")
-        
-    
-        
+
     def get_state(self):
         return self.__current_action

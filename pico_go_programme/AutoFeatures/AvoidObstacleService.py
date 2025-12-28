@@ -1,10 +1,11 @@
 
 
 
+from AutoFeatures import ObstacleDetection
 import utime
 from Hardware import LEDControl
 from Helper.has_time_elapsed import has_time_elapsed
-from AutoFeatures import UltraSoundObstacleDetection, PicoPilot
+from AutoFeatures import PicoPilot
 
 
 class AvoidObstacleService():
@@ -44,13 +45,13 @@ class AvoidObstacleService():
             self.drive_forward(current_time)
 
     def turn_to_obstacle(self):
-        self.__Pilot.left(15)
+        self.__Pilot.left()
                     
         if (self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("AVOIDING")
             
     def turn_away_from_obstacle(self):
-        self.__Pilot.go(direction="RIGHT", speed=15)
+        self.__Pilot.go(direction="RIGHT")
 
         if (not self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("DRIVING")

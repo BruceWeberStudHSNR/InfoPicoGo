@@ -1,9 +1,4 @@
-
-
-from Hardware import TRSensor, MotorControl
-
-def has_time_elapsed(current_time, start_time, threshhold):
-    return (current_time - start_time) >= threshhold
+from Helper.has_time_elapsed import has_time_elapsed
 
 class LineFollowService():
     def __init__(self, 

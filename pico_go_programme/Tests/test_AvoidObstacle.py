@@ -2,7 +2,7 @@
 import unittest
 
 from Tests import test_helpers, MockObstacleDetection
-from AutoFeatures import AvoidObstacleService, UltraSoundObstacleDetection, PicoPilot
+from AutoFeatures import AvoidObstacleService, PicoPilot
 from Hardware_Mocks import MockMotor, MockUltraSoundSensor
 
 class TestAvoidObstacle(unittest.TestCase):
@@ -38,7 +38,7 @@ class TestAvoidObstacle(unittest.TestCase):
     def test_drive_around_obstacle_searching_to_avoiding(self):
         self.avoid_obstacle_service.avoiding_state = "SEARCHING"
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "LEFT 10")
+        self.assertEqual(self.motor.get_last_action(), "LEFT 50")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "SEARCHING")
         
         self.ultrasound_detection.is_recognising_obstacle = True
@@ -52,7 +52,7 @@ class TestAvoidObstacle(unittest.TestCase):
         self.ultrasound_detection.is_recognising_obstacle = False
         
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "LEFT 10")
+        self.assertEqual(self.motor.get_last_action(), "LEFT 50")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "SEARCHING")
         
         
@@ -69,7 +69,7 @@ class TestAvoidObstacle(unittest.TestCase):
         self.ultrasound_detection.is_recognising_obstacle = True
         
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "RIGHT 10")
+        self.assertEqual(self.motor.get_last_action(), "RIGHT 50")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "AVOIDING")
         
     def test_drive_around_obstacle_driving_to_searching(self):

@@ -18,8 +18,8 @@ class LineDetection:
         
     def __update_on_line_state(self, new_state, current_time):
         if (self.is_on_line != new_state):
-            self.is_on_line = new_state
             self.__time_counter = current_time
+        self.is_on_line = new_state
             
     def __update_recognizing_line_state(self, on_line, current_time, threshhold):
         if (has_time_elapsed(current_time, self.__time_counter, threshhold)):
@@ -27,7 +27,7 @@ class LineDetection:
             self.is_recognizing_line = on_line
         
     def detect_line(self):
-        position, line_sensore_values = self.__TRSensor.readLine() # Read 
+        position, line_sensore_values = self.__TRSensor.readLine() # Read Sesnor input
         current_time = self.__TimeService.ticks_ms()
         is_on_line = self.is_line_visible(line_sensore_values)
 
@@ -47,13 +47,3 @@ class LineDetection:
     def is_line_visible(self,line_sensore_values):
         average_value = sum(line_sensore_values) / len(line_sensore_values)
         return average_value < self.__on_line_threshold
-    
-    def loose_line(self, current_time):
-        if (has_time_elapsed(current_time, self.__time_counter, self.__forget_line_time)):
-            self.__time_counter = current_time
-            self.is_recognizing_line = False
-            
-    def recognize_line(self, current_time):
-        if (has_time_elapsed(current_time, self.__time_counter, self.__recognize_line_time)):
-            self.__time_counter = current_time
-            self.is_recognizing_line = True
