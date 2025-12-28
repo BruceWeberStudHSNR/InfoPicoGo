@@ -1,6 +1,6 @@
 
 
-from helper import has_time_elapsed
+from Helper.has_time_elapsed import has_time_elapsed
 
 
 class PicoPilot:

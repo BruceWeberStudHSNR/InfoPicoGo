@@ -6,6 +6,7 @@ import time
 class MotorControl(object):
     #Initialisierung der Motorsteuerung (wird beim Erstellen ausgeführt)
     def __init__(self):
+        print("init motor")
         self.PWMA = PWM(Pin(16))
         self.PWMA.freq(1000)
         self.AIN2 = Pin(17, Pin.OUT)

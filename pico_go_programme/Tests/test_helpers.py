@@ -3,7 +3,7 @@ import sys
 from unittest.mock import Mock
 
 # Ensure repository root (Info) is importable when running tests so
-# package imports like `from pico_go_programme.AutoPicoGo import AutoPicoGo` work.
+# package imports like `from AutoPicoGo import AutoPicoGo` work.
 ROOT = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)

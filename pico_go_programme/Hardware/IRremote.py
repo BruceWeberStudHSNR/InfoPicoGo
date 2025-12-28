@@ -1,5 +1,5 @@
 from machine import Pin
-from pico_go_programme.Hardware.MotorControl import MotorControl
+from Hardware.MotorControl import MotorControl
 import utime
 
 #Bietet eine Implementierung zur Kontrolle des Roboters mittels der Mitgelieferten Infrarot-Fernsteuerung

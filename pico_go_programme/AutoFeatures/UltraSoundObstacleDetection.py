@@ -1,13 +1,13 @@
-from helper import has_time_elapsed
+from Helper.has_time_elapsed import has_time_elapsed
 
 class UltraSoundObstacleDetection():
     def __init__(self, 
                  UltraSoundSensor = None,
                 TimeService = None,
-                obstacle_forget_time = 2000,
-                obstacle_remember_time = 3000,
+                obstacle_forget_time = 5000,
+                obstacle_remember_time = 2000,
                 obstacle_recognition_time = 500,
-                obstacle_recognition_distance = 40,
+                obstacle_recognition_distance = 50,
                 ):
         self.__obstacle_forget_time =  obstacle_forget_time
         self.__obstacle_remember_time =obstacle_remember_time

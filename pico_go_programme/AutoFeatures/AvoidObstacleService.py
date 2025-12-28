@@ -3,7 +3,7 @@
 
 import utime
 from Hardware import LEDControl
-from helper import has_time_elapsed
+from Helper.has_time_elapsed import has_time_elapsed
 from AutoFeatures import UltraSoundObstacleDetection, PicoPilot
 
 
@@ -31,8 +31,6 @@ class AvoidObstacleService():
             self.__Pilot.stop()
     
     def drive_around_obstacle(self):
-        print("drive around obstacle", self.avoiding_state)
-        self.__UltraSoundObstacleDetection.detect_obstacle()
         current_time = self.__TimeService.ticks_ms() # Get time after measurement, because of blocking ultrasonic measurement                                                                                                 
 
 
@@ -46,13 +44,13 @@ class AvoidObstacleService():
             self.drive_forward(current_time)
 
     def turn_to_obstacle(self):
-        self.__Pilot.go(direction="LEFT", speed=10)
+        self.__Pilot.left(15)
                     
         if (self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("AVOIDING")
             
     def turn_away_from_obstacle(self):
-        self.__Pilot.go(direction="RIGHT", speed=10)
+        self.__Pilot.go(direction="RIGHT", speed=15)
 
         if (not self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("DRIVING")

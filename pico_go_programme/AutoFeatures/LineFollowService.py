@@ -9,31 +9,23 @@ class LineFollowService():
     def __init__(self, 
                  Pilot, 
                  LineDetection,
-                 TimeService,
                  dash_time=2000, 
                  turn_time=1000):
         self.__Pilot = Pilot
         self.__LineDetection = LineDetection
-        self.__TimeService = TimeService 
-
-        self.__last_line_position = 0
         
         # Parameters for searching behaviour (maybe own class later)
         self.__searching_dash_time = dash_time
         self.__searching_turn_time = turn_time
         self.searching_state = "DASHING" # "DASHING" or "TURNING"
         
-    def follow_line(self, current_time):
-        position, _ = self.__LineDetection.detect_line(current_time)
-        
+    def follow_line(self):        
         if (self.__LineDetection.is_recognizing_line):
-            self.drive_along_line(position, self.__last_line_position)
+            self.drive_along_line(self.__LineDetection.line_position, self.__LineDetection.last_line_position)
             
         else:
             self.search_for_line()
-        
-        self.__last_line_position = position
-        
+                
     def search_for_line(self):        
         # Alternate between dashing forward and turning right to find the line
         if (self.searching_state == "DASHING"):
