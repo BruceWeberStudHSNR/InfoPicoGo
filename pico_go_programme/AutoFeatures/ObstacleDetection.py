@@ -37,7 +37,6 @@ class ObstacleDetection():
 
     def scan_front_distance(self):
         distance = self.__Sensor.get_distance()
-        print("Distance measured", distance)
         return distance
 
     def is_obstacle_in_sight(self, distance):

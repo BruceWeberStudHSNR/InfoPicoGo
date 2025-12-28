@@ -1,4 +1,4 @@
-from Info.pico_go_programme.AutoFeatures import ObstacleDetection
+from AutoFeatures import ObstacleDetection
 from machine import Pin
 from AutoFeatures import LineFollowService,AvoidObstacleService, PicoPilot,LineDetection,LightOperator
 
@@ -52,20 +52,20 @@ class AutoPicoGo():
             LineDetection=self.__LineDetection,
             dash_time=2000, 
             turn_time=1000)
-        self.__UltraSoundObstacleDetection = ObstacleDetection.ObstacleDetection(
+        self.__ObstacleDetection = ObstacleDetection.ObstacleDetection(
             self.__USSensor, 
             self.__TimeService)        
         self.__AvoidObstacleService = AvoidObstacleService.AvoidObstacleService(
             self.__TimeService, 
             self.__Motor, 
             self.__LedControl, 
-            self.__UltraSoundObstacleDetection )
+            self.__ObstacleDetection )
 
 
     def run(self):
         self.scan()
 
-        self.act()
+        #self.act()
 
         self.update_ui()
 
@@ -85,7 +85,7 @@ class AutoPicoGo():
 
     def scan(self):
         if(self.is_checking_for_obstacles):
-            self.__UltraSoundObstacleDetection.detect_obstacle()
+            self.__ObstacleDetection.detect_obstacle()
 
         self.__LineDetection.detect_line()
             
@@ -96,7 +96,7 @@ class AutoPicoGo():
             self.drive_around_obstacle()
 
     def follow_line(self):        
-        if (self.__UltraSoundObstacleDetection.is_remembering_obstacle):
+        if (self.__ObstacleDetection.is_remembering_obstacle):
             self.__car_action = "DRIVE_AROUND_OBSTACLE"
         else:
             self.__LineFollowService.follow_line()
@@ -111,10 +111,16 @@ class AutoPicoGo():
         self.__LightOperator.update_leds(
             self.__led_mode, 
             self.__AvoidObstacleService.avoiding_state, 
-            self.__UltraSoundObstacleDetection.is_remembering_obstacle, 
+            self.__ObstacleDetection.is_remembering_obstacle, 
             is_on_line=self.__LineDetection.is_on_line)
         
-        #self.update_buzzer()
+        self.update_buzzer()
+        
+    def update_buzzer(self):
+        if (self.__ObstacleDetection.is_recognising_obstacle):
+            self.__Buzzer.buzz_on()
+        else:
+            self.__Buzzer.buzz_off()
 
         
     

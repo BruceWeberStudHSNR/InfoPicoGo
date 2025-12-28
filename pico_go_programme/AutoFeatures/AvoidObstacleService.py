@@ -34,7 +34,7 @@ class AvoidObstacleService():
     def drive_around_obstacle(self):
         current_time = self.__TimeService.ticks_ms() # Get time after measurement, because of blocking ultrasonic measurement                                                                                                 
 
-
+        print("Avoidstate: ",self.avoiding_state)
         if (self.avoiding_state == "SEARCHING"):
             self.turn_to_obstacle()
             
