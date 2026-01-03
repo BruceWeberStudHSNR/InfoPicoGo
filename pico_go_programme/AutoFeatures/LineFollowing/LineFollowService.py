@@ -1,5 +1,7 @@
 from Helper.has_time_elapsed import has_time_elapsed
 
+
+
 class LineFollowService():
     def __init__(self, 
                  Pilot, 
@@ -9,7 +11,7 @@ class LineFollowService():
         self.__Pilot = Pilot
         self.__LineDetection = LineDetection
         
-        # Parameters for searching behaviour (maybe own class later)
+        # TODO:  own class for line searching behaviour
         self.__searching_dash_time = dash_time
         self.__searching_turn_time = turn_time
         self.searching_state = "DASHING" # "DASHING" or "TURNING"
@@ -44,6 +46,7 @@ class LineFollowService():
         left = 0
         right = 0
         
+        # TODO: Diese werte als parameter rein geben, und in der main anpassen koennen
         correction_factor = 30 # Higher = More aggressive turning towards line
         inertia = 2      # Higher = More smoothing of direction changes
 

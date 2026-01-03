@@ -1,4 +1,5 @@
 from AutoFeatures.AutoPicoGo import AutoPicoGo
+from AutoFeatures.Operation import PicoTime
 import utime
 from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl, Buzzer
 from Hardware_Mocks import MockTRSensor,MockUltraSoundSensor
@@ -13,15 +14,12 @@ def autoFactory(mock=False):
     Motor=MotorControl.MotorControl()
     Led=LEDControl.LEDControl()
     Buzzer_=Buzzer.Buzzer()
-    Ultra_sound=None
-    Tr_sensor=None
-    TimeService = utime
+    Tr_sensor = TRSensor.TRSensor()
+    TimeService = PicoTime.PicoTime(utime)
+    Ultra_sound = UltraSoundSensor.UltraSoundSensor()
     if (mock):
         Tr_sensor = MockTRSensor.MockTRSensor()
         Ultra_sound = MockUltraSoundSensor.MockUltraSoundSensor()
-    else:
-        Tr_sensor = TRSensor.TRSensor()
-        Ultra_sound = UltraSoundSensor.UltraSoundSensor()
 
     autoPicoGo = AutoPicoGo(
         forward_speed=forward_speed, 
@@ -34,11 +32,12 @@ def autoFactory(mock=False):
         Led=Led,
         Ultra_sound=Ultra_sound,
         Buzzer=Buzzer_)
+    assert autoPicoGo is not None, "AutoPicoGo instance required"
+    
     return autoPicoGo
 
 autoPicoGo = autoFactory(mock=False)
 
-assert autoPicoGo is not None, "AutoPicoGo instance required"
 
 autoPicoGo.calibrate_line_sensors()
 

@@ -1,8 +1,8 @@
 
 class LightOperator():
-    def __init__(self,Led):
+    def __init__(self,Led, Colors=None):
         self.__LedControl = Led
-        self.colors = ColorCode()
+        self.colors = Colors if Colors is not None else Default_Colors()
         
     def set_lights_fill(self,color):
         self.__LedControl.pixels_fill(color)
@@ -50,7 +50,7 @@ class LightOperator():
 
         self.set_pixels_avoiding_obstacle()
         
-class ColorCode():
+class Default_Colors():
     def __init__(self):
         self.BLACK = (0, 0, 0)
         self.RED = (255, 0, 0)

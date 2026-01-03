@@ -1,11 +1,10 @@
 
 
 
-from AutoFeatures import ObstacleDetection
-import utime
+from AutoFeatures.ObstacleAversion import ObstacleDetection
 from Hardware import LEDControl
 from Helper.has_time_elapsed import has_time_elapsed
-from AutoFeatures import PicoPilot
+from AutoFeatures.Operation import PicoPilot
 
 
 class AvoidObstacleService():
@@ -27,8 +26,9 @@ class AvoidObstacleService():
         
     def __update_avoiding_state(self, new_state):
         if (self.avoiding_state != new_state):
+            print("AvoidObstacleState changed to: ", new_state)
             self.avoiding_state = new_state
-            self.__dash_timer = 0
+            self.__dash_timer = self.__TimeService.ticks_ms()
             self.__Pilot.stop()
     
     def drive_around_obstacle(self):

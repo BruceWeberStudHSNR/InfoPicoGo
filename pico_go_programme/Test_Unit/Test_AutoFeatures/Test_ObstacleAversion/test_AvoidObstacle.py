@@ -1,24 +1,24 @@
 
 import unittest
 
-from Tests import test_helpers, MockObstacleDetection
-from AutoFeatures import AvoidObstacleService, PicoPilot
+from Test_Unit.shared import StubsAndMocks, MockPilot
+from AutoFeatures.ObstacleAversion import AvoidObstacleService
 from Hardware_Mocks import MockMotor, MockUltraSoundSensor
 
 class TestAvoidObstacle(unittest.TestCase):
     def setUp(self):
         print("="*20)
-        self.time_service = test_helpers.TimeServiceStub(0)
+        self.time_service = StubsAndMocks.TimeServiceStub(0)
         self.motor = MockMotor.MockMotor()
         self.ultrasound_sensor = MockUltraSoundSensor.MockUltraSoundSensor()
         
-        self.pico_pilot = PicoPilot.PicoPilot(
+        self.pico_pilot = MockPilot.MockPilot(
             Motor=self.motor, 
             TimeService=self.time_service)
         
         self.pico_pilot.set_speed(50)
         
-        self.ultrasound_detection = MockObstacleDetection.MockObstacleDetection(
+        self.ultrasound_detection = StubsAndMocks.MockObstacleDetection(
             obstacle_forget_time=100, 
             obstacle_recognition_time=200, 
             obstacle_recognition_distance=20)

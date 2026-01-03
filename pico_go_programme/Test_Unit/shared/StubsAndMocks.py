@@ -1,6 +1,7 @@
 import os
 import sys
 from unittest.mock import Mock
+from Hardware_Mocks.MockMotor import MockMotor
 
 # Ensure repository root (Info) is importable when running tests so
 # package imports like `from AutoPicoGo import AutoPicoGo` work.
@@ -101,6 +102,14 @@ class TimeServiceStub:
     def set_ticks_ms(self, t):
         self._time = t
 
+    def ticks_diff(self, end, start):
+        return end - start
+
+    def has_time_elapsed(self, start_time, threshold_ms):
+        current_time = self.ticks_ms()
+        elapsed = self.ticks_diff(current_time, start_time)
+        return elapsed >= threshold_ms
+
 
 class SensorStub:
     def __init__(self, distance=100):
@@ -148,8 +157,8 @@ def mock_hardware():
 
     Returns (motor_stub, us_stub, time_stub, buzzer_stub, ir_sensor_stub)
     """
-    
-    motor = MotorStub()
+
+    motor = MockMotor()
     us = SensorStub(distance=100)
     time_svc = TimeServiceStub(0)
     buzzer = BuzzerStub()
@@ -187,3 +196,10 @@ class MockAvoidObstacleService():
         self.scan_and_avoid_obstacle = Mock(return_value=None)
         self.drive_around_obstacle = Mock()
         
+class MockObstacleDetection():
+    def __init__(self, obstacle_recognition_distance=20, obstacle_recognition_time=100, obstacle_remember_time=2000, obstacle_forget_time=3000):
+        self.obstacle_recognition_distance = obstacle_recognition_distance
+        self.obstacle_recognition_time = obstacle_recognition_time
+        self.obstacle_remember_time = obstacle_remember_time
+        self.obstacle_forget_time = obstacle_forget_time
+        self.is_recognising_obstacle = False

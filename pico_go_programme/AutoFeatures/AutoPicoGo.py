@@ -1,6 +1,8 @@
 from AutoFeatures import ObstacleDetection
 from machine import Pin
-from AutoFeatures import LineFollowService,AvoidObstacleService, PicoPilot,LineDetection,LightOperator
+from AutoFeatures.LineFollowing import LineFollowService,LineDetection
+from AutoFeatures.ObstacleAversion import AvoidObstacleService
+from AutoFeatures.Operation import PicoPilot, LightOperator
 
 class AutoPicoGo():
     def __init__(self,
@@ -10,7 +12,8 @@ class AutoPicoGo():
                  Ultra_sound,
                  Buzzer,
                  TimeService,
-                 forward_speed=20, 
+                 forward_speed=20,
+                 speed_levels=[20, 40, 60, 80, 100],
                  turn_speed=15, 
                  is_checking_for_obstacles=True,
                  led_mode="AVOIDING_OBSTACLE",
@@ -65,7 +68,7 @@ class AutoPicoGo():
     def run(self):
         self.scan()
 
-        #self.act()
+        self.act()
 
         self.update_ui()
 
@@ -115,6 +118,8 @@ class AutoPicoGo():
             is_on_line=self.__LineDetection.is_on_line)
         
         self.update_buzzer()
+        
+        # TODO: update screen
         
     def update_buzzer(self):
         if (self.__ObstacleDetection.is_recognising_obstacle):

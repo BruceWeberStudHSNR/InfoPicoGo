@@ -1,6 +1,11 @@
 from Helper.has_time_elapsed import has_time_elapsed
 
 class LineDetection:
+    # TRSensor Interface
+    # readLine() -> (number, Array<number>)
+    
+    # TimeService Interface
+    # ticks_ms() -> number    
     def __init__(self, TRSensor, TimeService, on_line_threshold=2000, recognize_line_time=50, forget_line_time=200):
         self.__TRSensor = TRSensor
         self.__TimeService = TimeService
@@ -16,10 +21,11 @@ class LineDetection:
         self.last_line_position = 0
         self.line_sensor_values = []
         
-    def __update_on_line_state(self, new_state, current_time):
-        if (self.is_on_line != new_state):
+    def __update_on_line_state(self, new_is_on_line, current_time):
+        if (self.is_on_line != new_is_on_line):
+            print("Line state changed to:", new_is_on_line)
             self.__time_counter = current_time
-        self.is_on_line = new_state
+            self.is_on_line = new_is_on_line
             
     def __update_recognizing_line_state(self, on_line, current_time, threshhold):
         if (has_time_elapsed(current_time, self.__time_counter, threshhold)):

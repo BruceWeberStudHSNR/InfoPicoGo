@@ -1,13 +1,13 @@
-from Tests import test_helpers
-from AutoFeatures import ObstacleDetection
+from Test_Unit.shared import StubsAndMocks
+from AutoFeatures.ObstacleAversion import ObstacleDetection
 
 import unittest
 
 
 class TestUltraSoundObstacleDetection(unittest.TestCase):
     def setUp(self):
-        self.time = test_helpers.TimeServiceStub(0)
-        self.sensor = test_helpers.SensorStub(100)
+        self.time = StubsAndMocks.TimeServiceStub(0)
+        self.sensor = StubsAndMocks.SensorStub(100)
         # use short times so tests run fast
         self.instance = ObstacleDetection.ObstacleDetection(
             UltraSoundSensor=self.sensor,
