@@ -53,3 +53,4 @@ class LineDetection:
     def is_line_visible(self,line_sensore_values):
         average_value = sum(line_sensore_values) / len(line_sensore_values)
         return average_value < self.__on_line_threshold
+#Kommentar
