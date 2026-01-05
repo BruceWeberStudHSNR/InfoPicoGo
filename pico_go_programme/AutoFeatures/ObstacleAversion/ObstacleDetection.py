@@ -46,23 +46,29 @@ class ObstacleDetection():
         if (self.is_seeing_obstacle):
             self.__obstacle_time_counter = current_time
             self.is_seeing_obstacle = False
+            print("is_seeing_obstacle is FALSE")
         else:
             if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_recognition_time)):
                 self.is_recognising_obstacle = False
+                print("is_recognising_obstacle is FALSE")
             if (has_time_elapsed(current_time, self.__obstacle_time_counter,self.__obstacle_forget_time )):
                 self.is_remembering_obstacle = False
+                print("is_remembering_obstacle is FALSE")
     
     def see_obstacle(self, current_time):
         if (not self.is_seeing_obstacle):
             self.__obstacle_time_counter = current_time
             self.is_seeing_obstacle = True
+            print("is_seeing_obstacle is TRUE")
 
         self.recognice_and_remember_obstacle(current_time)
 
     def recognice_and_remember_obstacle(self, current_time):
         if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_recognition_time)):
             self.is_recognising_obstacle = True
+            print("is_recognising_obstacle is TRUE")
         
         if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_remember_time)):
             self.__obstacle_time_counter = current_time
             self.is_remembering_obstacle = True
+            print("is_remembering_obstacle is TRUE")

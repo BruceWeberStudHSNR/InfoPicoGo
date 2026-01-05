@@ -1,16 +1,28 @@
+import utime
 from AutoFeatures.AutoPicoGo import AutoPicoGo
 from AutoFeatures.Operation import PicoTime
-import utime
 from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl, Buzzer
 from Hardware_Mocks import MockTRSensor,MockUltraSoundSensor
+from AutoFeatures.ObstacleAversion import ObstacleDetection
+from AutoFeatures.LineFollowing import LineFollowService,LineDetection
+from AutoFeatures.ObstacleAversion import AvoidObstacleService
+from AutoFeatures.Operation import PicoPilot, LightOperator
+
+
 
 autoPicoGo = None
 
 def autoFactory(mock=False):
-    forward_speed=40
-    turn_speed=25
-    led_mode="AVOIDING_OBSTACLE"
+    forward_speed=20
+    turn_speed=15
+    led_mode="LINE_AND_OBSTACLE"
+    
     is_checking_for_obstacles=True
+    obstacle_recognition_distance = 70
+    obstacle_recognition_time = 300
+    obstacle_remember_time = 1000
+
+    # Hardware
     Motor=MotorControl.MotorControl()
     Led=LEDControl.LEDControl()
     Buzzer_=Buzzer.Buzzer()
@@ -20,6 +32,40 @@ def autoFactory(mock=False):
     if (mock):
         Tr_sensor = MockTRSensor.MockTRSensor()
         Ultra_sound = MockUltraSoundSensor.MockUltraSoundSensor()
+
+    # Service
+    Pilot = PicoPilot.PicoPilot(
+            Motor=Motor,
+            TimeService=TimeService,
+            default_speed=forward_speed
+        )
+    Light_Operator = LightOperator.LightOperator(
+            Led=Led)
+
+    Line_Detection = LineDetection.LineDetection(
+            TRSensor=Tr_sensor,
+            TimeService=TimeService,
+            on_line_threshold=300,
+            forget_line_time=500,
+            recognize_line_time=100
+        )
+    LineFollow_Service = LineFollowService.LineFollowService(
+            Pilot=Pilot,
+            LineDetection=Line_Detection,
+            dash_time=2000, 
+            turn_time=1000)
+    Obstacle_Detection = ObstacleDetection.ObstacleDetection(
+            Ultra_sound, 
+            TimeService,
+            obstacle_recognition_distance=obstacle_recognition_distance,
+            obstacle_recognition_time=obstacle_recognition_time,
+            obstacle_remember_time=1000)        
+    AvoidObstacle_Service = AvoidObstacleService.AvoidObstacleService(
+            TimeService, 
+            Motor, 
+            Led, 
+            Obstacle_Detection )
+
 
     autoPicoGo = AutoPicoGo(
         forward_speed=forward_speed, 
@@ -31,7 +77,14 @@ def autoFactory(mock=False):
         Tr_sensor=Tr_sensor,
         Led=Led,
         Ultra_sound=Ultra_sound,
-        Buzzer=Buzzer_)
+        Buzzer=Buzzer_,
+        Pilot=Pilot,
+        LightOperator=Light_Operator,
+        LineDetection=Line_Detection,
+        LineFollowing=LineFollow_Service,
+        ObstacleAversion=AvoidObstacle_Service,
+        ObstacleDetection=Obstacle_Detection,
+        speed_levels=[])
     assert autoPicoGo is not None, "AutoPicoGo instance required"
     
     return autoPicoGo

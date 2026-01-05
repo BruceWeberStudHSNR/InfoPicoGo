@@ -21,5 +21,5 @@ class UltraSoundSensor():
         te=utime.ticks_us()
         distance=((te-ts)*0.034)/2
 
-        print("Disntace", distance)
+        # print("Disntace", distance)
         return distance

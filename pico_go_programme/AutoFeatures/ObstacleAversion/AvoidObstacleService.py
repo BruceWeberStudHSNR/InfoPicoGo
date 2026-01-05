@@ -1,6 +1,3 @@
-
-
-
 from AutoFeatures.ObstacleAversion import ObstacleDetection
 from Hardware import LEDControl
 from Helper.has_time_elapsed import has_time_elapsed
@@ -51,7 +48,7 @@ class AvoidObstacleService():
             self.__update_avoiding_state("AVOIDING")
             
     def turn_away_from_obstacle(self):
-        self.__Pilot.go(direction="RIGHT")
+        self.__Pilot.go_direction_for_ms(direction="RIGHT", duration_ms=500)
 
         if (not self.__UltraSoundObstacleDetection.is_recognising_obstacle):
             self.__update_avoiding_state("DRIVING")

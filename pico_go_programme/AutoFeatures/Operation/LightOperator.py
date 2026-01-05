@@ -47,8 +47,6 @@ class LightOperator():
             self.__LedControl.pixels_fill(self.colors.GREEN)
         else:
             self.__LedControl.pixels_fill(self.colors.YELLOW)
-
-        self.set_pixels_avoiding_obstacle()
         
 class Default_Colors():
     def __init__(self):

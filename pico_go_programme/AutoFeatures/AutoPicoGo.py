@@ -1,8 +1,4 @@
-from AutoFeatures import ObstacleDetection
 from machine import Pin
-from AutoFeatures.LineFollowing import LineFollowService,LineDetection
-from AutoFeatures.ObstacleAversion import AvoidObstacleService
-from AutoFeatures.Operation import PicoPilot, LightOperator
 
 class AutoPicoGo():
     def __init__(self,
@@ -12,6 +8,12 @@ class AutoPicoGo():
                  Ultra_sound,
                  Buzzer,
                  TimeService,
+                 Pilot,
+                 LightOperator,
+                 LineDetection,
+                 LineFollowing,
+                 ObstacleDetection,
+                 ObstacleAversion,
                  forward_speed=20,
                  speed_levels=[20, 40, 60, 80, 100],
                  turn_speed=15, 
@@ -33,36 +35,16 @@ class AutoPicoGo():
         self.__Buzzer = Buzzer 
         self.__TimeService = TimeService
 
-        self.__Pilot = PicoPilot.PicoPilot(
-            Motor=self.__Motor,
-            TimeService=self.__TimeService
-        )
+        self.__Pilot = Pilot
         
-        self.__LightOperator = LightOperator.LightOperator(
-            Led=self.__LedControl            )
+        self.__LightOperator = LightOperator
         # self.__Buzzer = buzzer if buzzer is not None else Buzzer.Buzzer()
         # --- 2) instantiate services, passing hardware instances ---
 
-        self.__LineDetection = LineDetection.LineDetection(
-            TRSensor=self.__IRSensor,
-            TimeService=self.__TimeService,
-            on_line_threshold=2000,
-            forget_line_time=1000,
-            recognize_line_time=100
-        )
-        self.__LineFollowService = LineFollowService.LineFollowService(
-            Pilot=self.__Pilot,
-            LineDetection=self.__LineDetection,
-            dash_time=2000, 
-            turn_time=1000)
-        self.__ObstacleDetection = ObstacleDetection.ObstacleDetection(
-            self.__USSensor, 
-            self.__TimeService)        
-        self.__AvoidObstacleService = AvoidObstacleService.AvoidObstacleService(
-            self.__TimeService, 
-            self.__Motor, 
-            self.__LedControl, 
-            self.__ObstacleDetection )
+        self.__LineDetection = LineDetection
+        self.__LineFollowService = LineFollowing
+        self.__ObstacleDetection = ObstacleDetection      
+        self.__AvoidObstacleService = ObstacleAversion
 
 
     def run(self):
@@ -99,13 +81,14 @@ class AutoPicoGo():
             self.drive_around_obstacle()
 
     def follow_line(self):        
-        if (self.__ObstacleDetection.is_remembering_obstacle):
+        if (self.__ObstacleDetection.is_recognising_obstacle):
             self.__car_action = "DRIVE_AROUND_OBSTACLE"
         else:
             self.__LineFollowService.follow_line()
 
     def drive_around_obstacle(self):
         if (self.__LineDetection.is_on_line):
+            # Might cause problems because it cannot leave the line to avoid an obstacle
             self.__car_action = "FOLLOW_LINE"
         else:
             self.__AvoidObstacleService.drive_around_obstacle()
