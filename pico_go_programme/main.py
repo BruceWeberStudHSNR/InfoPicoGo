@@ -59,7 +59,7 @@ def autoFactory(mock=False):
             TimeService,
             obstacle_recognition_distance=obstacle_recognition_distance,
             obstacle_recognition_time=obstacle_recognition_time,
-            obstacle_remember_time=1000)        
+            obstacle_remember_time=obstacle_remember_time)        
     AvoidObstacle_Service = AvoidObstacleService.AvoidObstacleService(
             TimeService, 
             Motor, 
