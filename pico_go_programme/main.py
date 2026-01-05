@@ -21,6 +21,11 @@ def autoFactory(mock=False):
     obstacle_recognition_distance = 70
     obstacle_recognition_time = 300
     obstacle_remember_time = 1000
+    turntime = 1000
+    dashtime = 2000
+    recogniselinetime=100
+    forgetlinetime=500
+    onlinethreshhold=300
 
     # Hardware
     Motor=MotorControl.MotorControl()
@@ -45,15 +50,15 @@ def autoFactory(mock=False):
     Line_Detection = LineDetection.LineDetection(
             TRSensor=Tr_sensor,
             TimeService=TimeService,
-            on_line_threshold=300,
-            forget_line_time=500,
-            recognize_line_time=100
+            on_line_threshold=onlinethreshhold,
+            forget_line_time=forgetlinetime,
+            recognize_line_time=recogniselinetime
         )
     LineFollow_Service = LineFollowService.LineFollowService(
             Pilot=Pilot,
             LineDetection=Line_Detection,
-            dash_time=2000, 
-            turn_time=1000)
+            dash_time=dashtime, 
+            turn_time=turntime)
     Obstacle_Detection = ObstacleDetection.ObstacleDetection(
             Ultra_sound, 
             TimeService,
