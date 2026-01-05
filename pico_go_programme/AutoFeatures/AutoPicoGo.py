@@ -97,7 +97,7 @@ class AutoPicoGo():
         self.__LightOperator.update_leds(
             self.__led_mode, 
             self.__AvoidObstacleService.avoiding_state, 
-            self.__ObstacleDetection.is_remembering_obstacle, 
+            self.__ObstacleDetection.is_recognising_obstacle, 
             is_on_line=self.__LineDetection.is_on_line)
         
         self.update_buzzer()
