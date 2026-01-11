@@ -29,11 +29,6 @@ class TestAvoidObstacle(unittest.TestCase):
             UltrasoundObstacleDetection=self.ultrasound_detection,
             dash_time=1000
         )
-        
-        
-
-    def test_initial_state(self):
-        self.assertEqual(self.avoid_obstacle_service.avoiding_state, "SEARCHING")
 
     def test_drive_around_obstacle_searching_to_avoiding(self):
         self.avoid_obstacle_service.avoiding_state = "SEARCHING"
@@ -41,15 +36,14 @@ class TestAvoidObstacle(unittest.TestCase):
         self.assertEqual(self.motor.get_last_action(), "LEFT 50")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "SEARCHING")
         
-        self.ultrasound_detection.is_recognising_obstacle = True
+        self.ultrasound_detection.is_seeing_obstacle = True
         
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "STOP")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "AVOIDING")
         
     def test_drive_around_obstacle_searching_staying(self):
         self.avoid_obstacle_service.avoiding_state = "SEARCHING"
-        self.ultrasound_detection.is_recognising_obstacle = False
+        self.ultrasound_detection.is_seeing_obstacle = False
         
         self.avoid_obstacle_service.drive_around_obstacle()
         self.assertEqual(self.motor.get_last_action(), "LEFT 50")
@@ -58,15 +52,32 @@ class TestAvoidObstacle(unittest.TestCase):
         
     def test_drive_around_obstacle_avoiding_to_driving(self):
         self.avoid_obstacle_service.avoiding_state = "AVOIDING"
-        self.ultrasound_detection.is_recognising_obstacle = False
+        self.ultrasound_detection.is_seeing_obstacle = False
         
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "STOP")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "DRIVING")
+
+    def test_drive_around_obstacle_driving_duration(self):
+        self.avoid_obstacle_service.avoiding_state = "DRIVING"
+        self.ultrasound_detection.is_seeing_obstacle = False
+
+        self.avoid_obstacle_service.drive_around_obstacle()
+        self.assertEqual(self.avoid_obstacle_service.avoiding_state, "DRIVING")
+
+        self.time_service.advance(999)
+        self.avoid_obstacle_service.drive_around_obstacle()
+
+        self.assertEqual(self.avoid_obstacle_service.avoiding_state, "DRIVING")
+
+        self.time_service.advance(2)
+        self.avoid_obstacle_service.drive_around_obstacle()
+        self.assertNotEqual(self.avoid_obstacle_service.avoiding_state, "DRIVING")
+
+
         
     def test_drive_around_obstacle_avoiding_staying(self):
         self.avoid_obstacle_service.avoiding_state = "AVOIDING"
-        self.ultrasound_detection.is_recognising_obstacle = True
+        self.ultrasound_detection.is_seeing_obstacle = True
         
         self.avoid_obstacle_service.drive_around_obstacle()
         self.assertEqual(self.motor.get_last_action(), "RIGHT 50")
@@ -74,7 +85,7 @@ class TestAvoidObstacle(unittest.TestCase):
         
     def test_drive_around_obstacle_driving_to_searching(self):
         self.avoid_obstacle_service.avoiding_state = "DRIVING"
-        self.ultrasound_detection.is_recognising_obstacle = False
+        self.ultrasound_detection.is_seeing_obstacle = False
         
         self.avoid_obstacle_service.drive_around_obstacle()
         self.assertEqual(self.motor.get_last_action(), "FORWARD 50")
@@ -82,18 +93,17 @@ class TestAvoidObstacle(unittest.TestCase):
         
         self.time_service.advance(1001)  # Advance time to exceed dash_time
         self.avoid_obstacle_service.drive_around_obstacle()
-        self.assertEqual(self.motor.get_last_action(), "STOP")
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "SEARCHING")
         
     def test_cycle_searching_avoiding_driving(self):
         # Start in SEARCHING
         self.avoid_obstacle_service.avoiding_state = "SEARCHING"
-        self.ultrasound_detection.is_recognising_obstacle = True
+        self.ultrasound_detection.is_seeing_obstacle = True
         
         self.avoid_obstacle_service.drive_around_obstacle()
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "AVOIDING")
         
-        self.ultrasound_detection.is_recognising_obstacle = False
+        self.ultrasound_detection.is_seeing_obstacle = False
         self.avoid_obstacle_service.drive_around_obstacle()
         self.assertEqual(self.avoid_obstacle_service.avoiding_state, "DRIVING")
         

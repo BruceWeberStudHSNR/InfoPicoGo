@@ -109,6 +109,9 @@ class TimeServiceStub:
         current_time = self.ticks_ms()
         elapsed = self.ticks_diff(current_time, start_time)
         return elapsed >= threshold_ms
+    
+    def elapsed_time(self, start):
+        return self.ticks_diff(start, self._time)
 
 
 class SensorStub:
@@ -120,6 +123,11 @@ class SensorStub:
 
     def set_distance(self, d):
         self._distance = d
+
+    def distance_mm(self):
+        return self._distance
+    
+    
 
 
 class BuzzerStub:
@@ -197,9 +205,23 @@ class MockAvoidObstacleService():
         self.drive_around_obstacle = Mock()
         
 class MockObstacleDetection():
-    def __init__(self, obstacle_recognition_distance=20, obstacle_recognition_time=100, obstacle_remember_time=2000, obstacle_forget_time=3000):
+    def __init__(self, obstacle_recognition_distance=20, obstacle_recognition_time=100, obstacle_remember_time=2000, obstacle_forget_time=3000,measured_distance=10):
         self.obstacle_recognition_distance = obstacle_recognition_distance
         self.obstacle_recognition_time = obstacle_recognition_time
         self.obstacle_remember_time = obstacle_remember_time
         self.obstacle_forget_time = obstacle_forget_time
+
         self.is_recognising_obstacle = False
+        self.is_seeing_obstacle = False
+        self.is_remembering_obstacle = False
+
+        self.measured_distance = measured_distance
+
+class MockLineDetection():
+    def __init__(self):
+        self.is_on_line = False
+        self.is_recognizing_line = False
+
+    def detect_line():
+        pass
+       

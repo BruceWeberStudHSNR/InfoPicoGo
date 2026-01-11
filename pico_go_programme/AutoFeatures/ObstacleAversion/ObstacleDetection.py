@@ -1,5 +1,3 @@
-from Helper.has_time_elapsed import has_time_elapsed
-
 class ObstacleDetection():
     def __init__(self, 
                  UltraSoundSensor = None,
@@ -9,9 +7,15 @@ class ObstacleDetection():
                 obstacle_recognition_time = 500,
                 obstacle_recognition_distance = 50,
                 ):
+
+        self.__Sensor = UltraSoundSensor
+        self.__TimeService = TimeService
+
         self.__obstacle_forget_time =  obstacle_forget_time
         self.__obstacle_remember_time =obstacle_remember_time
         self.__obstacle_recognition_time = obstacle_recognition_time
+        self.__obstacle_time_counter =self.__TimeService.ticks_ms()
+
         self.__obstacle_recognition_distance =obstacle_recognition_distance
         
         # If the Obstacle is currently still in front of the auto
@@ -22,9 +26,7 @@ class ObstacleDetection():
         # And not long enough to be forgotten
         self.is_remembering_obstacle = False
 
-        self.__Sensor = UltraSoundSensor
-        self.__TimeService = TimeService
-        self.__obstacle_time_counter =self.__TimeService.ticks_ms()
+        self.measured_distance = -1
 
     def detect_obstacle(self):
         front_distance = self.scan_front_distance()
@@ -36,39 +38,34 @@ class ObstacleDetection():
 
 
     def scan_front_distance(self):
-        distance = self.__Sensor.get_distance()
+        distance = self.__Sensor.distance_mm()
+        self.measured_distance = distance
         return distance
 
     def is_obstacle_in_sight(self, distance):
-        return distance <= self.__obstacle_recognition_distance
+        return distance <= self.__obstacle_recognition_distance and distance != -1
 
     def forget_obstacle(self, current_time):
         if (self.is_seeing_obstacle):
             self.__obstacle_time_counter = current_time
             self.is_seeing_obstacle = False
-            print("is_seeing_obstacle is FALSE")
         else:
-            if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_recognition_time)):
+            if (self.__TimeService.has_time_elapsed( self.__obstacle_time_counter, self.__obstacle_recognition_time)):
                 self.is_recognising_obstacle = False
-                print("is_recognising_obstacle is FALSE")
-            if (has_time_elapsed(current_time, self.__obstacle_time_counter,self.__obstacle_forget_time )):
+            if (self.__TimeService.has_time_elapsed( self.__obstacle_time_counter,self.__obstacle_forget_time )):
                 self.is_remembering_obstacle = False
-                print("is_remembering_obstacle is FALSE")
     
     def see_obstacle(self, current_time):
         if (not self.is_seeing_obstacle):
             self.__obstacle_time_counter = current_time
             self.is_seeing_obstacle = True
-            print("is_seeing_obstacle is TRUE")
 
         self.recognice_and_remember_obstacle(current_time)
 
     def recognice_and_remember_obstacle(self, current_time):
-        if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_recognition_time)):
+        if (self.__TimeService.has_time_elapsed( self.__obstacle_time_counter, self.__obstacle_recognition_time)):
             self.is_recognising_obstacle = True
-            print("is_recognising_obstacle is TRUE")
         
-        if (has_time_elapsed(current_time, self.__obstacle_time_counter, self.__obstacle_remember_time)):
+        if (self.__TimeService.has_time_elapsed( self.__obstacle_time_counter, self.__obstacle_remember_time)):
             self.__obstacle_time_counter = current_time
             self.is_remembering_obstacle = True
-            print("is_remembering_obstacle is TRUE")

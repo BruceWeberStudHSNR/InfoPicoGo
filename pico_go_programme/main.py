@@ -13,14 +13,24 @@ from AutoFeatures.Operation import PicoPilot, LightOperator
 autoPicoGo = None
 
 def autoFactory(mock=False):
-    forward_speed=20
-    turn_speed=15
-    led_mode="LINE_AND_OBSTACLE"
+    forward_speed=30
+    turn_speed=20
+    led_mode="avoid_with_seeing"
     
     is_checking_for_obstacles=True
-    obstacle_recognition_distance = 70
-    obstacle_recognition_time = 300
-    obstacle_remember_time = 1000
+    obstacle_recognition_distance = 100
+    obstacle_recognition_time = 150
+    obstacle_remember_time = 250
+    obstacle_forget_time = 3000
+    obstacle_turn_away_minimum_time = obstacle_recognition_time
+
+    obstacle_max_searching_time = 600
+    
+    line_searching_turn_time = 500
+    line_searching_dash_time = 1000
+    recogniselinetime=100
+    forgetlinetime=500
+    onlinethreshhold=400
 
     # Hardware
     Motor=MotorControl.MotorControl()
@@ -45,26 +55,29 @@ def autoFactory(mock=False):
     Line_Detection = LineDetection.LineDetection(
             TRSensor=Tr_sensor,
             TimeService=TimeService,
-            on_line_threshold=300,
-            forget_line_time=500,
-            recognize_line_time=100
+            on_line_threshold=onlinethreshhold,
+            forget_line_time=forgetlinetime,
+            recognize_line_time=recogniselinetime
         )
     LineFollow_Service = LineFollowService.LineFollowService(
             Pilot=Pilot,
             LineDetection=Line_Detection,
-            dash_time=2000, 
-            turn_time=1000)
+            dash_time=line_searching_dash_time, 
+            turn_time=line_searching_turn_time)
     Obstacle_Detection = ObstacleDetection.ObstacleDetection(
             Ultra_sound, 
             TimeService,
             obstacle_recognition_distance=obstacle_recognition_distance,
             obstacle_recognition_time=obstacle_recognition_time,
-            obstacle_remember_time=obstacle_remember_time)        
+            obstacle_remember_time=obstacle_remember_time,
+            obstacle_forget_time=obstacle_forget_time)        
     AvoidObstacle_Service = AvoidObstacleService.AvoidObstacleService(
             TimeService, 
-            Motor, 
-            Led, 
-            Obstacle_Detection )
+            Pilot, 
+            Obstacle_Detection,
+            dash_time=line_searching_dash_time,
+            minimum_turn_time=obstacle_turn_away_minimum_time,
+            max_search_time=obstacle_max_searching_time)
 
 
     autoPicoGo = AutoPicoGo(

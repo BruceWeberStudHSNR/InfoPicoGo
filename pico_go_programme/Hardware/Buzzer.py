@@ -2,7 +2,7 @@ from machine import Pin
 
 class Buzzer ():
     def __init__ (self):
-        self.buzzer_pin = Pin(15, Pin.OUT)
+        self.buzzer_pin = Pin(4, Pin.OUT)
 
     def buzz_on(self):
         self.buzzer_pin.value(1)
