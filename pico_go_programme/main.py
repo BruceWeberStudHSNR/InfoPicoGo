@@ -1,7 +1,7 @@
 import utime
 from AutoFeatures.AutoPicoGo import AutoPicoGo
 from AutoFeatures.Operation import PicoTime
-from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl, Buzzer
+from Hardware import MotorControl, TRSensor, UltraSoundSensor, LEDControl, Buzzer, ST7789
 from Hardware_Mocks import MockTRSensor,MockUltraSoundSensor
 from AutoFeatures.ObstacleAversion import ObstacleDetection
 from AutoFeatures.LineFollowing import LineFollowService,LineDetection
@@ -27,6 +27,7 @@ def autoFactory(mock=False):
     Led=LEDControl.LEDControl()
     Buzzer_=Buzzer.Buzzer()
     Tr_sensor = TRSensor.TRSensor()
+    lcd = ST7789.DisplayControl()
     TimeService = PicoTime.PicoTime(utime)
     Ultra_sound = UltraSoundSensor.UltraSoundSensor()
     if (mock):
@@ -78,6 +79,7 @@ def autoFactory(mock=False):
         Led=Led,
         Ultra_sound=Ultra_sound,
         Buzzer=Buzzer_,
+        lcd=lcd,
         Pilot=Pilot,
         LightOperator=Light_Operator,
         LineDetection=Line_Detection,
