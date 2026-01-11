@@ -6,9 +6,11 @@ class AutoPicoGo():
     TRIGGER_DISTANCE_CM = 25      # Obstacle Avoidance Trigger Distance
     MAX_DISTANCE_CM = 80          # Max Distance to Display Obstacle
 
+    # Car Position on Screen
     CAR_X = 120
     CAR_Y = 70
 
+    # Line Display Configuration
     LINE_WIDTH = 6
     LINE_THICKNESS = 2
 
@@ -58,8 +60,7 @@ class AutoPicoGo():
         # Battery Data
         self.__battery = machine.ADC(Pin(26))
 
-        # Ui Mode
-        self.ui_mode = self.UI_DEBUG   # Switch UI Mode
+        # Ui Frames
         self.__ui_frame = 0
 
 
@@ -109,6 +110,7 @@ class AutoPicoGo():
         else:
             self.__AvoidObstacleService.drive_around_obstacle()
 
+    # Update Buzzer -> Buzzing when Obstacle is detected
     def update_buzzer(self):
         if (self.__ObstacleDetection.is_recognising_obstacle):
             self.__Buzzer.buzz_on()
@@ -119,8 +121,16 @@ class AutoPicoGo():
 
 
     # UI Functions
+    #
+    #  ______________________________
+    # | Battery       Current State |
+    # |                             |
+    # | ------------[][]----------- |
+    # |                             |
+    # | US Dist       Line Position |
+    # |_____________________________|
 
-        
+    # Display Ultrasonic Distance to Obstacle with Trigger Line    
     def _draw_ultrasonic(self, distance):
         x, y = 150, 90
         width, height = 70, 8
@@ -135,6 +145,7 @@ class AutoPicoGo():
         d = min(distance, self.MAX_DISTANCE_CM)
         fill = int((self.MAX_DISTANCE_CM - d) / self.MAX_DISTANCE_CM * width)
 
+        # Change Color and Animation depending on Distance
         if d < 15:
             color = self.__lcd.ORANGE if self.__ui_frame % 10 < 5 else self.__lcd.BLACK
         elif d < 30:
@@ -155,7 +166,7 @@ class AutoPicoGo():
 
         self.__lcd.text(f"{int(d)}cm", x, y + 12, self.__lcd.WHITE)
 
-
+    # Display Line Position as Boxes example: [x] [] [] -> Line is on the left
     def _draw_line_position(self, pos):
         base_x, y = 80, 95
         self.__lcd.text("LINE", base_x - 15, y - 12, self.__lcd.WHITE)
@@ -171,6 +182,7 @@ class AutoPicoGo():
         elif pos > 0:
             self.__lcd.fill_rect(base_x + 30, y, 10, 10, self.__lcd.GREEN)
 
+    # Display Car as Rectangle 
     def _draw_car_topdown(self):
         self.__lcd.fill_rect(
             self.CAR_X - 10,
@@ -180,6 +192,7 @@ class AutoPicoGo():
             self.__lcd.WHITE
         )
 
+    # Display Line relative to Car
     def _draw_line_topdown(self, line_pos):
 
         offset = 0
@@ -199,9 +212,10 @@ class AutoPicoGo():
                 self.__lcd.WHITE
             )
 
+    # Update the LED, Buzzer and Display
     def update_ui(self):
 
-        # LED
+        # Update LED
         self.__LightOperator.update_leds(
             self.__led_mode,
             self.__AvoidObstacleService.avoiding_state,
@@ -209,10 +223,10 @@ class AutoPicoGo():
             is_on_line=self.__LineDetection.is_on_line
         )
 
-        # Buzzer
+        # Update Buzzer
         self.update_buzzer()
 
-        # Data
+        # Collect Data
         state = self.__AvoidObstacleService.avoiding_state
         distance = self.__USSensor.get_distance()
         line_pos = self.__LineDetection.line_position
@@ -220,17 +234,17 @@ class AutoPicoGo():
         v = self.__battery.read_u16() * 3.3 / 65535 * 2
         battery = max(0, min(100, (v - 3) * 100 / 1.2))
 
-        # Background
+        # Fill Background
         bg = self.__lcd.BLACK if self.ui_mode == self.UI_MINIMAL else self.__lcd.DARKBLUE
         self.__lcd.fill(bg)
 
-        # Line
+        # Draw Line
         self._draw_line_topdown(line_pos=line_pos)
 
-        # Car
+        # Draw Car
         self._draw_car_topdown()
 
-        # State
+        # Draw State
         color = self.__lcd.ORANGE
         if state == "DRIVING":
             color = self.__lcd.GREEN
@@ -240,10 +254,10 @@ class AutoPicoGo():
         self.__lcd.text(state, 5, 5, color)
         self.__lcd.text(f"{int(battery)}%", 185, 5, self.__lcd.WHITE)
 
-        # Line Position
+        # Draw Line Position
         self._draw_line_position(line_pos)
 
-        # Ultrasonic Distance
+        # Draw Ultrasonic Distance
         self._draw_ultrasonic(distance)
 
         # Update Display
