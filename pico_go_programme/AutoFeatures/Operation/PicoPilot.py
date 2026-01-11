@@ -1,7 +1,5 @@
 
 
-from Helper.has_time_elapsed import has_time_elapsed
-
 
 class PicoPilot:
     def __init__(self, 
@@ -21,15 +19,12 @@ class PicoPilot:
         self.default_speed = speed
         
     def __update_action(self, new_action):
-        current_time = -1
         if (self.__current_action != new_action):
             self.__current_state_start_time = self.__TimeService.ticks_ms()
             self.__current_action = new_action
             
         self.has_stopped = new_action == "STOP"
-        
-        return current_time
-    
+            
     def __use_speed_or_default(self, speed):
         if speed is None or speed <= 0:
             return self.default_speed
@@ -43,7 +38,7 @@ class PicoPilot:
 
     def go_direction_for_ms(self, direction, duration_ms, speed=None):
         speed = self.__use_speed_or_default(speed)
-        current_time = self.__update_action(direction)
+        self.__update_action(direction)
         if (self.__TimeService.has_time_elapsed(self.__current_state_start_time, duration_ms)):
             self.stop()
         else:
@@ -51,10 +46,10 @@ class PicoPilot:
 
         
     def set_wheels_for_ms(self, left_speed, right_speed, duration_ms):
-        current_time = self.__update_action("SET_WHEELS")
+        self.__update_action("SET_WHEELS")
         self.set_wheels(left_speed, right_speed)
     
-        if has_time_elapsed(current_time, self.__current_state_start_time, duration_ms):
+        if self.__TimeService.has_time_elapsed(self.__current_state_start_time, duration_ms):
             self.stop()
             pass
         

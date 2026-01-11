@@ -14,9 +14,11 @@ class LightOperator():
             self.set_pixels_avoiding_obstacle(avoiding_state)
         elif led_mode  == "LINE":
             self.set_pixels_line_following(is_on_line)
+        elif led_mode  == "avoid_with_seeing":
+            self.avoid_with_obstacle(avoiding_state, is_remembering_obstacle)
         elif led_mode  == "LINE_AND_OBSTACLE":
             if is_remembering_obstacle:
-                self.set_pixels_seeing_obstacle(is_remembering_obstacle)
+                self.set_pixels_avoiding_obstacle(is_remembering_obstacle)
             else:
                 self.set_pixels_line_following(is_on_line)
 
@@ -24,11 +26,21 @@ class LightOperator():
         
     def set_pixels_avoiding_obstacle(self, avoiding_state):
         if (avoiding_state == "SEARCHING"):
-            self.__LedControl.pixels_fill(self.colors.YELLOW)
+            self.__LedControl.pixels_fill(self.colors.GREEN)
         elif (avoiding_state == "AVOIDING"):
-            self.__LedControl.pixels_fill(self.colors.RED)
+            self.__LedControl.pixels_fill(self.colors.CYAN)
         elif (avoiding_state == "DRIVING"):
             self.__LedControl.pixels_fill(self.colors.BLUE)
+
+    def avoid_with_obstacle(self,avoiding_state, is_seeing_obstacle):
+        self.set_pixels_avoiding_obstacle(avoiding_state)
+
+        if (is_seeing_obstacle):
+            self.__LedControl.pixels_set(0, self.colors.RED)
+            self.__LedControl.pixels_set(1, self.colors.RED)
+        else:
+            self.__LedControl.pixels_set(0, self.colors.YELLOW)
+            self.__LedControl.pixels_set(1, self.colors.YELLOW)
             
     def set_pixels_follow_line_mode(self, obstacle_detected):
         if (obstacle_detected):

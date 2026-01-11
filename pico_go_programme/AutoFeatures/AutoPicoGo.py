@@ -2,30 +2,32 @@ from machine import Pin
 
 class AutoPicoGo():
     def __init__(self,
-                 Motor,
-                 Tr_sensor,
-                 Led,
-                 Ultra_sound,
-                 Buzzer,
-                 TimeService,
-                 Pilot,
-                 LightOperator,
-                 LineDetection,
-                 LineFollowing,
-                 ObstacleDetection,
-                 ObstacleAversion,
-                 forward_speed=20,
-                 speed_levels=[20, 40, 60, 80, 100],
-                 turn_speed=15, 
-                 is_checking_for_obstacles=True,
-                 led_mode="AVOIDING_OBSTACLE",
+                Motor,
+                Tr_sensor,
+                Led,
+                Ultra_sound,
+                Buzzer,
+                TimeService,
+                Pilot,
+                LightOperator,
+                LineDetection,
+                LineFollowing,
+                ObstacleDetection,
+                ObstacleAversion,
+                forward_speed=20,
+                speed_levels=[20, 40, 60, 80, 100],
+                turn_speed=15, 
+                is_checking_for_obstacles=True,
+                led_mode="AVOIDING_OBSTACLE",
     ):
         self.forward_speed = forward_speed
         self.turn_speed = turn_speed
         self.__led_mode = led_mode
         
-        self.__car_action = "FOLLOW_LINE" #"FOLLOW_LINE" # / "DRIVE_AROUND_OBSTACLE" / "RETURN_TO_LINE" 
+        self.__car_action = "FOLLOW_LINE" #"FOLLOW_LINE" # / "DRIVE_AROUND_OBSTACLE" 
         self.is_checking_for_obstacles=is_checking_for_obstacles
+
+        self.__timer = 0
 
         # Use passed Hardware classes or instantiate default
         self.__Motor = Motor 
@@ -36,9 +38,8 @@ class AutoPicoGo():
         self.__TimeService = TimeService
 
         self.__Pilot = Pilot
-        
+
         self.__LightOperator = LightOperator
-        # self.__Buzzer = buzzer if buzzer is not None else Buzzer.Buzzer()
         # --- 2) instantiate services, passing hardware instances ---
 
         self.__LineDetection = LineDetection
@@ -75,10 +76,12 @@ class AutoPicoGo():
         self.__LineDetection.detect_line()
             
     def act(self):
-        if(self.__car_action == "FOLLOW_LINE"):
-            self.follow_line()
-        elif(self.__car_action == "DRIVE_AROUND_OBSTACLE"):
-            self.drive_around_obstacle()
+        # print("Car Action: ", self.__car_action)
+        # if(self.__car_action == "FOLLOW_LINE"):
+        #     self.follow_line()
+        # elif(self.__car_action == "DRIVE_AROUND_OBSTACLE"):
+        
+        self.drive_around_obstacle()
 
     def follow_line(self):        
         if (self.__ObstacleDetection.is_recognising_obstacle):
@@ -87,11 +90,11 @@ class AutoPicoGo():
             self.__LineFollowService.follow_line()
 
     def drive_around_obstacle(self):
-        if (self.__LineDetection.is_on_line):
+        self.__AvoidObstacleService.drive_around_obstacle()
+
+        if (self.__LineDetection.is_on_line and not self.__ObstacleDetection.is_seeing_obstacle):
             # Might cause problems because it cannot leave the line to avoid an obstacle
             self.__car_action = "FOLLOW_LINE"
-        else:
-            self.__AvoidObstacleService.drive_around_obstacle()
 
     def update_ui(self):
         self.__LightOperator.update_leds(
@@ -105,7 +108,7 @@ class AutoPicoGo():
         # TODO: update screen
         
     def update_buzzer(self):
-        if (self.__ObstacleDetection.is_recognising_obstacle):
+        if (self.__ObstacleDetection.is_seeing_obstacle):
             self.__Buzzer.buzz_on()
         else:
             self.__Buzzer.buzz_off()
