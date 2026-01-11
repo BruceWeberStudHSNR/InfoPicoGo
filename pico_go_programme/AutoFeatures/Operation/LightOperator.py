@@ -18,9 +18,9 @@ class LightOperator():
             self.avoid_with_obstacle(avoiding_state, is_remembering_obstacle)
         elif led_mode  == "LINE_AND_OBSTACLE":
             if is_remembering_obstacle:
-                self.set_pixels_avoiding_obstacle(is_remembering_obstacle)
+                self.avoid_with_obstacle(is_remembering_obstacle)
             else:
-                self.set_pixels_line_following(is_on_line)
+                self.set_pixels_follow_line_mode(is_on_line)
 
         self.__LedControl.pixels_show()
         

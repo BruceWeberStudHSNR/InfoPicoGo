@@ -13,7 +13,7 @@ from AutoFeatures.Operation import PicoPilot, LightOperator
 autoPicoGo = None
 
 def autoFactory(mock=False):
-    forward_speed=20
+    forward_speed=30
     turn_speed=20
     led_mode="avoid_with_seeing"
     
@@ -30,7 +30,7 @@ def autoFactory(mock=False):
     line_searching_dash_time = 1000
     recogniselinetime=100
     forgetlinetime=500
-    onlinethreshhold=300
+    onlinethreshhold=400
 
     # Hardware
     Motor=MotorControl.MotorControl()

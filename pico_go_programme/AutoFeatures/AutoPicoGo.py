@@ -76,12 +76,10 @@ class AutoPicoGo():
         self.__LineDetection.detect_line()
             
     def act(self):
-        # print("Car Action: ", self.__car_action)
-        # if(self.__car_action == "FOLLOW_LINE"):
-        #     self.follow_line()
-        # elif(self.__car_action == "DRIVE_AROUND_OBSTACLE"):
-        
-        self.drive_around_obstacle()
+        if(self.__car_action == "FOLLOW_LINE"):
+            self.follow_line()
+        elif(self.__car_action == "DRIVE_AROUND_OBSTACLE"):
+            self.drive_around_obstacle()
 
     def follow_line(self):        
         if (self.__ObstacleDetection.is_recognising_obstacle):
@@ -95,6 +93,7 @@ class AutoPicoGo():
         if (self.__LineDetection.is_on_line and not self.__ObstacleDetection.is_seeing_obstacle):
             # Might cause problems because it cannot leave the line to avoid an obstacle
             self.__car_action = "FOLLOW_LINE"
+            self.__ObstacleDetection.is_remembering_obstacle = False
 
     def update_ui(self):
         self.__LightOperator.update_leds(
