@@ -8,7 +8,7 @@ class Display():
 
     # Car Position on Screen
     CAR_X = 120
-    CAR_Y = 70
+    CAR_Y = 68
 
     # Line Display Configuration
     LINE_WIDTH = 6
@@ -76,7 +76,7 @@ class Display():
 
     # Display Line Position as Boxes example: [x] [] [] -> Line is on the left
     def _draw_line_position(self, pos):
-        base_x, y = 80, 95
+        base_x, y = 50, 95
         self.__lcd.text("LINE", base_x - 15, y - 12, self.__lcd.WHITE)
 
         self.__lcd.rect(base_x - 30, y, 10, 10, self.__lcd.WHITE)
@@ -125,7 +125,7 @@ class Display():
 
         # Collect Data
         state = self.__AvoidObstacleService.avoiding_state
-        distance = self.__ObstacleDetection.measured_distance
+        distance = self.__ObstacleDetection.measured_distance * 10
         line_pos = self.__LineDetection.line_position
 
         v = self.__battery.read_u16() * 3.3 / 65535 * 2
