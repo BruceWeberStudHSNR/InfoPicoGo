@@ -27,7 +27,6 @@ def autoFactory(mock=False):
     Led=LEDControl.LEDControl()
     Buzzer_=Buzzer.Buzzer()
     Tr_sensor = TRSensor.TRSensor()
-    lcd = ST7789.DisplayControl()
     TimeService = PicoTime.PicoTime(utime)
     Ultra_sound = UltraSoundSensor.UltraSoundSensor()
     if (mock):
@@ -66,6 +65,9 @@ def autoFactory(mock=False):
             Motor, 
             Led, 
             Obstacle_Detection )
+    
+    #Display
+    Display = Display(lcd=ST7789.DisplayControl(), AvoidObstacleService=AvoidObstacle_Service, ObstacleDetection=Obstacle_Detection, LineDetection=Line_Detection)
 
 
     autoPicoGo = AutoPicoGo(
@@ -79,7 +81,7 @@ def autoFactory(mock=False):
         Led=Led,
         Ultra_sound=Ultra_sound,
         Buzzer=Buzzer_,
-        lcd=lcd,
+        Display=Display,
         Pilot=Pilot,
         LightOperator=Light_Operator,
         LineDetection=Line_Detection,
